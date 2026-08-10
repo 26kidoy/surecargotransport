@@ -577,6 +577,7 @@
 /* ============================================================
    SALES DASHBOARD - DEEPSEEK-STYLE RESPONSIVE STYLES
    Theme: White / Violet
+   FIXED: Mobile responsiveness, chart sizing, padding issues
    ============================================================ */
 
 :root {
@@ -636,6 +637,8 @@ body {
     line-height: 1.6;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
+    width: 100%;
 }
 
 body, .card, .table, .btn, .form-select, .form-control, .pagination, .modal-content, label, input, select, textarea {
@@ -721,6 +724,7 @@ p, span, li, a, label, input, select, textarea, button,
     align-items: center;
     justify-content: center;
     gap: var(--sp-xs);
+    transition: all 0.3s ease;
 }
 
 .btn-success {
@@ -852,10 +856,18 @@ p, span, li, a, label, input, select, textarea, button,
     padding: var(--sp-sm);
 }
 
+/* FIX: Chart responsiveness */
 #salesChart {
     display: block;
-    width: 100%;
-    height: 100%;
+    width: 100% !important;
+    height: 100% !important;
+    max-width: 100%;
+}
+
+.chart-container canvas {
+    width: 100% !important;
+    height: 100% !important;
+    max-width: 100%;
 }
 
 .d-none {
@@ -863,7 +875,7 @@ p, span, li, a, label, input, select, textarea, button,
 }
 
 /* ============================================================
-   TOP STATS FLEX ROW STYLES
+   TOP STATS FLEX ROW STYLES - FIXED
    ============================================================ */
 .top-stats-row {
     width: 100%;
@@ -889,7 +901,7 @@ p, span, li, a, label, input, select, textarea, button,
     gap: var(--sp-md);
     box-shadow: var(--shadow-sm);
     border: 1px solid var(--gray-200);
-    transition: transform 0.3s, box-shadow 0.3s;
+    transition: all 0.3s ease;
     position: relative;
     overflow: hidden;
 }
@@ -925,6 +937,7 @@ p, span, li, a, label, input, select, textarea, button,
 
 .stat-details {
     flex: 1;
+    min-width: 0;
 }
 
 .stat-label {
@@ -943,6 +956,7 @@ p, span, li, a, label, input, select, textarea, button,
     font-weight: 800;
     line-height: 1.2;
     color: var(--violet-dark);
+    word-break: break-word;
 }
 
 /* Individual stat card colors - Violet theme */
@@ -998,7 +1012,7 @@ p, span, li, a, label, input, select, textarea, button,
 }
 
 /* ============================================================
-   MODAL - Violet Theme
+   MODAL - Violet Theme - FIXED
    ============================================================ */
 .modal-content {
     border-radius: 2.5rem;
@@ -1007,6 +1021,7 @@ p, span, li, a, label, input, select, textarea, button,
     background: #ffffff;
     font-family: 'Inter', 'Poppins', sans-serif !important;
     font-size: var(--font-base) !important;
+    max-width: 100%;
 }
 
 .modal-header {
@@ -1044,7 +1059,7 @@ p, span, li, a, label, input, select, textarea, button,
 }
 
 /* ============================================================
-   CHART WRAPPER CARD
+   CHART WRAPPER CARD - FIXED
    ============================================================ */
 .chart-wrapper-card {
     border-radius: 1.5rem;
@@ -1118,7 +1133,7 @@ small, .small {
 }
 
 /* ============================================================
-   RESPONSIVE - DEEPSEEK STYLE
+   RESPONSIVE - FIXED AND IMPROVED
    ============================================================ */
 
 /* --- Tablets & Small Desktops (769px - 1024px) --- */
@@ -1168,9 +1183,13 @@ small, .small {
         padding: var(--sp-sm) var(--sp-md);
         min-width: 140px;
     }
+
+    .modal-content {
+        border-radius: 2rem;
+    }
 }
 
-/* --- Mobile Devices (≤ 768px) --- */
+/* --- Mobile Devices (≤ 768px) - FIXED --- */
 @media (max-width: 768px) {
     :root {
         --font-xs: 0.7rem;
@@ -1190,6 +1209,7 @@ small, .small {
         --sp-xxl: 2rem;
     }
 
+    /* Base font sizing */
     body, .card, .table, .btn, .form-select, .form-control, .pagination, .modal-content, label, input, select, textarea {
         font-size: var(--font-sm) !important;
     }
@@ -1200,20 +1220,25 @@ small, .small {
         font-size: var(--font-sm) !important;
     }
 
+    /* Table adjustments */
     .table-custom td,
     .table-custom th {
         font-size: var(--font-sm) !important;
         padding: var(--sp-sm) var(--sp-xs) !important;
+        white-space: normal !important;
+        word-break: break-word !important;
     }
 
+    /* Buttons - bigger touch targets */
     .btn,
     .btn-sm {
         font-size: var(--font-sm) !important;
         padding: var(--sp-xs) var(--sp-md) !important;
-        min-height: 36px;
+        min-height: 38px !important;
         border-radius: 2rem !important;
     }
 
+    /* Badges */
     .badge-status,
     .batch-date,
     .date-visible {
@@ -1230,6 +1255,7 @@ small, .small {
         font-size: var(--font-sm) !important;
     }
 
+    /* Headings */
     .chart-container h5,
     .card-header h5,
     .modal-title {
@@ -1240,16 +1266,19 @@ small, .small {
         font-size: var(--font-lg) !important;
     }
 
+    /* Stats - Stack vertically on mobile */
     .stats-flex-container {
-        flex-direction: column;
-        gap: var(--sp-sm);
-        padding: var(--sp-xs);
+        flex-direction: column !important;
+        gap: var(--sp-sm) !important;
+        padding: var(--sp-xs) !important;
     }
 
     .stat-card {
-        min-width: auto;
-        padding: var(--sp-sm) var(--sp-md);
-        border-radius: 1.2rem;
+        min-width: auto !important;
+        width: 100% !important;
+        padding: var(--sp-sm) var(--sp-md) !important;
+        border-radius: 1.2rem !important;
+        flex: 0 0 auto !important;
     }
 
     .stat-icon {
@@ -1257,6 +1286,7 @@ small, .small {
         width: 44px;
         height: 44px;
         border-radius: 22px;
+        flex-shrink: 0;
     }
 
     .stat-value {
@@ -1267,25 +1297,29 @@ small, .small {
         font-size: var(--font-xs) !important;
     }
 
+    /* Chart - FIXED responsive height */
     .chart-canvas-wrapper {
-        height: 300px;
-        padding: var(--sp-xs);
+        height: 300px !important;
+        padding: var(--sp-xs) !important;
     }
 
     .chart-wrapper-card .card-header {
-        padding: var(--sp-sm) var(--sp-md);
+        padding: var(--sp-sm) var(--sp-md) !important;
     }
 
     .chart-wrapper-card .card-body {
         padding: var(--sp-sm) !important;
     }
 
+    /* Modal - FIXED */
     .modal-content {
-        border-radius: 1.5rem;
+        border-radius: 1.5rem !important;
+        margin: 0.5rem !important;
     }
 
     .modal-header {
-        padding: var(--sp-sm) var(--sp-md);
+        padding: var(--sp-sm) var(--sp-md) !important;
+        border-radius: 1.5rem 1.5rem 0 0 !important;
     }
 
     .modal-title {
@@ -1293,40 +1327,50 @@ small, .small {
     }
 
     .modal-body {
-        padding: var(--sp-md);
+        padding: var(--sp-md) !important;
         font-size: var(--font-sm) !important;
     }
 
     .modal-footer {
-        padding: var(--sp-sm) var(--sp-md);
+        padding: var(--sp-sm) var(--sp-md) !important;
+        flex-wrap: wrap !important;
+        gap: 0.5rem !important;
     }
 
     .modal-footer .btn {
         font-size: var(--font-sm) !important;
-        min-height: 36px;
+        min-height: 38px !important;
+        flex: 1 !important;
+        min-width: 80px !important;
     }
 
+    /* Toast notification */
     .success-toast {
         font-size: var(--font-sm) !important;
         padding: var(--sp-sm) var(--sp-md) !important;
         min-height: 38px;
         bottom: 20px;
         right: 20px;
+        left: 20px;
+        max-width: calc(100% - 40px);
     }
 
+    /* Card headers */
     .card-header {
-        padding: var(--sp-sm) var(--sp-md);
+        padding: var(--sp-sm) var(--sp-md) !important;
     }
 
+    /* Batch cards */
     .batch-card {
-        border-radius: 1.2rem;
-        margin-bottom: var(--sp-sm);
+        border-radius: 1.2rem !important;
+        margin-bottom: var(--sp-sm) !important;
     }
 
     .batch-summary {
-        padding: var(--sp-xs) var(--sp-md);
+        padding: var(--sp-xs) var(--sp-md) !important;
     }
 
+    /* Grid spacing */
     .row.g-3 {
         --bs-gutter-y: var(--sp-sm) !important;
         --bs-gutter-x: var(--sp-sm) !important;
@@ -1340,12 +1384,23 @@ small, .small {
     .col-md-4,
     .col-md-6,
     .col-lg-3 {
-        padding-left: var(--sp-xs);
-        padding-right: var(--sp-xs);
+        padding-left: var(--sp-xs) !important;
+        padding-right: var(--sp-xs) !important;
+    }
+
+    /* SVG icons */
+    svg {
+        width: 1.2rem !important;
+        height: 1.2rem !important;
+    }
+
+    i.fa, i.fas, i.far {
+        font-size: var(--font-sm);
+        margin-right: 4px;
     }
 }
 
-/* --- Small Phones (≤ 576px) --- */
+/* --- Small Phones (≤ 576px) - FIXED --- */
 @media (max-width: 576px) {
     :root {
         --font-xs: 0.65rem;
@@ -1379,7 +1434,7 @@ small, .small {
     .btn-sm {
         font-size: var(--font-xs) !important;
         padding: var(--sp-xs) var(--sp-sm) !important;
-        min-height: 32px;
+        min-height: 34px !important;
         border-radius: 1.5rem !important;
     }
 
@@ -1401,15 +1456,16 @@ small, .small {
     }
 
     .stat-card {
-        padding: var(--sp-xs) var(--sp-sm);
-        border-radius: 1rem;
+        padding: var(--sp-xs) var(--sp-sm) !important;
+        border-radius: 1rem !important;
+        gap: var(--sp-xs) !important;
     }
 
     .stat-icon {
         font-size: var(--font-base);
-        width: 36px;
-        height: 36px;
-        border-radius: 18px;
+        width: 36px !important;
+        height: 36px !important;
+        border-radius: 18px !important;
     }
 
     .stat-value {
@@ -1420,18 +1476,20 @@ small, .small {
         font-size: 0.6rem !important;
     }
 
+    /* Chart - FIXED even smaller height */
     .chart-canvas-wrapper {
-        height: 250px;
+        height: 250px !important;
+        padding: var(--sp-xs) !important;
     }
 
     .modal-body {
         font-size: var(--font-xs) !important;
-        padding: var(--sp-sm);
+        padding: var(--sp-sm) !important;
     }
 
     .modal-footer .btn {
         font-size: var(--font-xs) !important;
-        min-height: 32px;
+        min-height: 34px !important;
     }
 
     .success-toast {
@@ -1441,32 +1499,59 @@ small, .small {
         border-radius: 32px;
         bottom: 15px;
         right: 15px;
+        left: 15px;
+        max-width: calc(100% - 30px);
     }
 
     .stats-flex-container {
-        gap: var(--sp-xs);
+        gap: var(--sp-xs) !important;
+        padding: var(--sp-xs) !important;
     }
 
     .batch-card {
-        border-radius: 1rem;
+        border-radius: 1rem !important;
     }
 
     .batch-summary {
-        padding: var(--sp-xs) var(--sp-sm);
+        padding: var(--sp-xs) var(--sp-sm) !important;
     }
 
     svg {
-        width: 1.2rem;
-        height: 1.2rem;
+        width: 1rem !important;
+        height: 1rem !important;
     }
 
     i.fa, i.fas, i.far {
         font-size: var(--font-sm);
-        margin-right: 4px;
+        margin-right: 3px;
+    }
+
+    /* Modal on small phones */
+    .modal-content {
+        border-radius: 1rem !important;
+        margin: 0.25rem !important;
+    }
+
+    .modal-header {
+        padding: var(--sp-xs) var(--sp-sm) !important;
+    }
+
+    .modal-body {
+        padding: var(--sp-sm) !important;
+    }
+
+    .modal-footer {
+        padding: var(--sp-xs) var(--sp-sm) !important;
+        flex-direction: column !important;
+    }
+
+    .modal-footer .btn {
+        width: 100% !important;
+        min-width: auto !important;
     }
 }
 
-/* --- Very Small Phones (≤ 400px) --- */
+/* --- Very Small Phones (≤ 400px) - FIXED --- */
 @media (max-width: 400px) {
     :root {
         --font-xs: 0.6rem;
@@ -1496,14 +1581,15 @@ small, .small {
     .btn-sm {
         font-size: 0.5rem !important;
         padding: 0.05rem var(--sp-xs) !important;
-        min-height: 28px;
+        min-height: 30px !important;
+        border-radius: 1rem !important;
     }
 
     .stat-icon {
-        width: 30px;
-        height: 30px;
-        font-size: 0.7rem;
-        border-radius: 14px;
+        width: 30px !important;
+        height: 30px !important;
+        font-size: 0.7rem !important;
+        border-radius: 14px !important;
     }
 
     .stat-value {
@@ -1514,31 +1600,39 @@ small, .small {
         font-size: 0.5rem !important;
     }
 
+    /* Chart - FIXED */
     .chart-canvas-wrapper {
-        height: 200px;
+        height: 200px !important;
+        padding: 0.1rem !important;
     }
 
     .modal-footer .btn {
         font-size: 0.5rem !important;
-        min-height: 28px;
+        min-height: 30px !important;
+        padding: 0.2rem 0.3rem !important;
     }
 
     .success-toast {
         font-size: 0.5rem !important;
         padding: 0.05rem var(--sp-xs) !important;
         min-height: 30px;
+        border-radius: 24px;
+        bottom: 10px;
+        right: 10px;
+        left: 10px;
+        max-width: calc(100% - 20px);
     }
 
     .card-header {
-        padding: var(--sp-xs) var(--sp-sm);
+        padding: var(--sp-xs) var(--sp-sm) !important;
     }
 
     .batch-card {
-        border-radius: 0.8rem;
+        border-radius: 0.8rem !important;
     }
 
     .modal-header {
-        padding: var(--sp-xs) var(--sp-sm);
+        padding: var(--sp-xs) var(--sp-sm) !important;
     }
 
     .modal-title {
@@ -1546,15 +1640,26 @@ small, .small {
     }
 
     .modal-body {
-        padding: var(--sp-xs);
+        padding: var(--sp-xs) !important;
     }
 
     .modal-footer {
-        padding: var(--sp-xs) var(--sp-sm);
+        padding: var(--sp-xs) var(--sp-sm) !important;
+    }
+
+    .stats-flex-container {
+        gap: 0.15rem !important;
+        padding: 0.1rem !important;
+    }
+
+    .stat-card {
+        padding: 0.15rem 0.3rem !important;
+        border-radius: 0.6rem !important;
+        gap: 0.2rem !important;
     }
 }
 
-/* --- Extra Small (≤ 350px) --- */
+/* --- Extra Small (≤ 350px) - FIXED --- */
 @media (max-width: 350px) {
     :root {
         --font-xs: 0.5rem;
@@ -1575,10 +1680,10 @@ small, .small {
     }
 
     .stat-icon {
-        width: 24px;
-        height: 24px;
-        font-size: 0.5rem;
-        border-radius: 12px;
+        width: 24px !important;
+        height: 24px !important;
+        font-size: 0.5rem !important;
+        border-radius: 12px !important;
     }
 
     .stat-value {
@@ -1589,25 +1694,108 @@ small, .small {
         font-size: 0.4rem !important;
     }
 
+    /* Chart - FIXED */
     .chart-canvas-wrapper {
-        height: 180px;
+        height: 180px !important;
+        padding: 0.05rem !important;
     }
 
     .btn,
     .btn-sm {
         font-size: 0.4rem !important;
-        min-height: 24px;
+        min-height: 26px !important;
     }
 
     .modal-footer .btn {
         font-size: 0.4rem !important;
-        min-height: 24px;
+        min-height: 26px !important;
     }
 
     .success-toast {
         font-size: 0.4rem !important;
         min-height: 26px;
+        border-radius: 20px;
+        padding: 0.1rem 0.3rem !important;
     }
+
+    .stat-card {
+        padding: 0.1rem 0.2rem !important;
+        border-radius: 0.5rem !important;
+    }
+
+    .modal-content {
+        border-radius: 0.8rem !important;
+    }
+
+    .modal-body {
+        padding: 0.15rem !important;
+    }
+
+    .card-header {
+        padding: 0.1rem 0.2rem !important;
+    }
+}
+
+/* ============================================================
+   FIX: Better table scrolling on mobile
+   ============================================================ */
+@media (max-width: 768px) {
+    .table-responsive {
+        border: none !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        overflow-x: auto !important;
+        -webkit-overflow-scrolling: touch !important;
+    }
+
+    .table-custom {
+        min-width: 500px !important;
+        width: 100% !important;
+    }
+}
+
+/* ============================================================
+   FIX: Chart container for mobile
+   ============================================================ */
+.chart-wrapper-card .card-body {
+    overflow: hidden !important;
+}
+
+.chart-wrapper-card .card-body canvas {
+    max-width: 100% !important;
+    height: auto !important;
+}
+
+/* ============================================================
+   FIX: Modal body scrolling
+   ============================================================ */
+.modal-body {
+    max-height: 70vh !important;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+}
+
+@media (max-width: 576px) {
+    .modal-body {
+        max-height: 60vh !important;
+    }
+}
+
+/* ============================================================
+   FIX: Prevent horizontal scroll
+   ============================================================ */
+.container,
+.container-fluid,
+.row {
+    max-width: 100% !important;
+    overflow-x: hidden !important;
+}
+
+.col-12,
+.col-sm-6,
+.col-md-4,
+.col-lg-3 {
+    max-width: 100% !important;
 }
 
 /* ============================================================
@@ -1620,6 +1808,106 @@ small, .small {
     opacity: 0;
     pointer-events: none;
     user-select: none;
+}
+
+.batch-summary {
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+}
+.batch-summary .d-flex {
+    flex-wrap: nowrap !important;
+    min-width: max-content !important;
+}
+
+/* ============================================================
+   CHART FONT SIZE CONTROLS
+   ============================================================ */
+
+/* Chart canvas container */
+.chart-canvas-wrapper {
+    position: relative;
+    width: 100% !important;
+    max-width: 100% !important;
+    height: 550px;
+    background: #ffffff;
+    border-radius: 1rem;
+    padding: var(--sp-sm);
+    overflow: hidden !important;
+}
+
+/* Force chart canvas to be responsive */
+#salesChart {
+    display: block !important;
+    width: 100% !important;
+    height: 100% !important;
+    max-width: 100% !important;
+    max-height: 100% !important;
+}
+
+/* Chart.js specific overrides */
+.chart-container canvas {
+    width: 100% !important;
+    height: 100% !important;
+    max-width: 100% !important;
+    max-height: 100% !important;
+}
+
+/* Legend text size control */
+.chart-container .chartjs-legend {
+    font-size: var(--font-sm) !important;
+}
+
+.chart-container .chartjs-legend li {
+    font-size: var(--font-sm) !important;
+}
+
+/* Tooltip text size */
+.chart-container .chartjs-tooltip {
+    font-size: var(--font-sm) !important;
+}
+
+/* --- Mobile font size overrides --- */
+@media (max-width: 768px) {
+    .chart-canvas-wrapper {
+        height: 300px !important;
+        padding: var(--sp-xs) !important;
+    }
+
+    /* Chart.js text sizes on mobile */
+    .chart-container .chartjs-legend {
+        font-size: 0.6rem !important;
+    }
+
+    .chart-container .chartjs-legend li {
+        font-size: 0.6rem !important;
+    }
+
+    /* Override Chart.js internal styles */
+    .chart-container canvas + div {
+        font-size: 0.6rem !important;
+    }
+}
+
+@media (max-width: 576px) {
+    .chart-canvas-wrapper {
+        height: 250px !important;
+        padding: var(--sp-xs) !important;
+    }
+
+    .chart-container .chartjs-legend {
+        font-size: 0.5rem !important;
+    }
+
+    .chart-container .chartjs-legend li {
+        font-size: 0.5rem !important;
+        padding: 2px 4px !important;
+    }
+}
+
+@media (max-width: 400px) {
+    .chart-canvas-wrapper {
+        height: 200px !important;
+    }
 }
 </style>
 @endpush
@@ -1690,157 +1978,398 @@ small, .small {
         return { labels, data: values };
     }
 
-    function updateChartFromAllBatches() {
-        if (!chartVisible) return;
+   function updateChartFromAllBatches() {
+    if (!chartVisible) return;
 
-        const canvas = document.getElementById('salesChart');
-        if (!canvas) return;
+    const canvas = document.getElementById('salesChart');
+    if (!canvas) return;
 
-        const ctx = canvas.getContext('2d');
-        const { labels, data } = getChartDataFromDOM();
-        const displayLabels = labels.length ? labels : ['No delivered bookings'];
-        const displayData = labels.length ? data : [0];
+    const ctx = canvas.getContext('2d');
+    const { labels, data } = getChartDataFromDOM();
+    const displayLabels = labels.length ? labels : ['No delivered bookings'];
+    const displayData = labels.length ? data : [0];
 
-        if (salesChart) {
-            salesChart.destroy();
-        }
-
-        salesChart = new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: displayLabels,
-                datasets: [{
-                    label: 'Total Sales (₱) - Delivered Only (All Batches)',
-                    data: displayData,
-                    backgroundColor: 'rgba(22, 163, 74, 0.85)',
-                    borderColor: '#15803D',
-                    borderWidth: 2,
-                    borderRadius: 16,
-                    hoverBackgroundColor: '#16A34A',
-                    hoverBorderColor: '#166534',
-                    hoverBorderWidth: 2.5,
-                    barPercentage: 0.7,
-                    categoryPercentage: 0.85,
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                interaction: {
-                    intersect: false,
-                    mode: 'index'
-                },
-                plugins: {
-                    tooltip: {
-                        bodyFont: { size: 26, weight: '600', family: Chart.defaults.font.family },
-                        titleFont: { size: 28, weight: '700', family: Chart.defaults.font.family },
-                        titleColor: '#0F172A',
-                        bodyColor: '#1E293B',
-                        backgroundColor: '#FFFFFF',
-                        borderColor: '#E2E8F0',
-                        borderWidth: 1,
-                        padding: 12,
-                        cornerRadius: 12,
-                        callbacks: {
-                            label: function(context) {
-                                return '₱' + context.raw.toFixed(2);
-                            }
-                        }
-                    },
-                    legend: {
-                        labels: {
-                            font: { size: 28, weight: '700', family: Chart.defaults.font.family },
-                            color: '#0F172A',
-                            usePointStyle: true,
-                            boxWidth: 18,
-                            padding: 20,
-                        },
-                        position: 'top',
-                        align: 'center',
-                    }
-                },
-                scales: {
-                    x: {
-                        ticks: {
-                            font: { size: 24, weight: '700', family: Chart.defaults.font.family },
-                            color: '#0F172A',
-                            autoSkip: false,
-                            maxRotation: 45,
-                            minRotation: 25,
-                            padding: 8,
-                        },
-                        title: {
-                            display: true,
-                            text: 'Batch',
-                            font: { size: 30, weight: '800', family: Chart.defaults.font.family },
-                            color: '#0F172A',
-                            padding: { top: 16, bottom: 8 },
-                        },
-                        grid: {
-                            color: '#CBD5E1',
-                            drawBorder: true,
-                            borderColor: '#CBD5E1',
-                            tickWidth: 2,
-                        }
-                    },
-                    y: {
-                        ticks: {
-                            font: { size: 24, weight: '700', family: Chart.defaults.font.family },
-                            color: '#0F172A',
-                            padding: 10,
-                            callback: function(value) {
-                                return '₱' + value.toLocaleString();
-                            }
-                        },
-                        title: {
-                            display: true,
-                            text: 'Total Sales (₱)',
-                            font: { size: 30, weight: '800', family: Chart.defaults.font.family },
-                            color: '#0F172A',
-                            padding: { bottom: 12, top: 8 },
-                        },
-                        grid: {
-                            color: '#CBD5E1',
-                            tickWidth: 2,
-                            drawBorder: true,
-                            borderColor: '#CBD5E1',
-                        }
-                    }
-                },
-                elements: {
-                    bar: {
-                        borderRadius: 16,
-                        borderSkipped: false,
-                    }
-                },
-                layout: {
-                    padding: {
-                        top: 24,
-                        bottom: 16,
-                        left: 12,
-                        right: 12
-                    }
-                },
-                hover: {
-                    mode: 'index',
-                    intersect: false,
-                    animationDuration: 150,
-                },
-                animation: {
-                    duration: 800,
-                    easing: 'easeOutQuart',
-                },
-                datasets: {
-                    bar: {
-                        borderRadius: 16,
-                        barPercentage: 0.7,
-                        categoryPercentage: 0.85,
-                    }
-                }
-            }
-        });
+    if (salesChart) {
+        salesChart.destroy();
     }
 
+    // ==================== RESPONSIVE FONT SIZES ====================
+    function getResponsiveFontSizes() {
+        const width = window.innerWidth;
+
+        // Base sizes that scale down on mobile
+        let sizes = {
+            tooltipBody: 26,
+            tooltipTitle: 28,
+            legend: 28,
+            xTicks: 24,
+            xTitle: 30,
+            yTicks: 24,
+            yTitle: 30,
+            barRadius: 16,
+            padding: { top: 24, bottom: 16, left: 12, right: 12 }
+        };
+
+        // Tablet (769px - 1024px)
+        if (width >= 769 && width <= 1024) {
+            sizes.tooltipBody = 18;
+            sizes.tooltipTitle = 20;
+            sizes.legend = 18;
+            sizes.xTicks = 16;
+            sizes.xTitle = 20;
+            sizes.yTicks = 16;
+            sizes.yTitle = 20;
+            sizes.barRadius = 12;
+            sizes.padding = { top: 16, bottom: 12, left: 10, right: 10 };
+        }
+        // Mobile (≤ 768px)
+        else if (width <= 768) {
+            sizes.tooltipBody = 12;
+            sizes.tooltipTitle = 14;
+            sizes.legend = 12;
+            sizes.xTicks = 10;
+            sizes.xTitle = 14;
+            sizes.yTicks = 10;
+            sizes.yTitle = 14;
+            sizes.barRadius = 8;
+            sizes.padding = { top: 10, bottom: 8, left: 6, right: 6 };
+        }
+        // Small phones (≤ 576px)
+        else if (width <= 576) {
+            sizes.tooltipBody = 10;
+            sizes.tooltipTitle = 11;
+            sizes.legend = 10;
+            sizes.xTicks = 8;
+            sizes.xTitle = 11;
+            sizes.yTicks = 8;
+            sizes.yTitle = 11;
+            sizes.barRadius = 6;
+            sizes.padding = { top: 6, bottom: 6, left: 4, right: 4 };
+        }
+        // Very small phones (≤ 400px)
+        else if (width <= 400) {
+            sizes.tooltipBody = 8;
+            sizes.tooltipTitle = 9;
+            sizes.legend = 8;
+            sizes.xTicks = 7;
+            sizes.xTitle = 9;
+            sizes.yTicks = 7;
+            sizes.yTitle = 9;
+            sizes.barRadius = 4;
+            sizes.padding = { top: 4, bottom: 4, left: 2, right: 2 };
+        }
+        // Extra small (≤ 350px)
+        else if (width <= 350) {
+            sizes.tooltipBody = 7;
+            sizes.tooltipTitle = 8;
+            sizes.legend = 7;
+            sizes.xTicks = 6;
+            sizes.xTitle = 8;
+            sizes.yTicks = 6;
+            sizes.yTitle = 8;
+            sizes.barRadius = 3;
+            sizes.padding = { top: 3, bottom: 3, left: 2, right: 2 };
+        }
+
+        return sizes;
+    }
+
+    const fontSizes = getResponsiveFontSizes();
+
+    // ==================== CHART OPTIONS ====================
+    const chartOptions = {
+        responsive: true,
+        maintainAspectRatio: false,
+        interaction: {
+            intersect: false,
+            mode: 'index'
+        },
+        plugins: {
+            tooltip: {
+                bodyFont: {
+                    size: fontSizes.tooltipBody,
+                    weight: '600',
+                    family: Chart.defaults.font.family
+                },
+                titleFont: {
+                    size: fontSizes.tooltipTitle,
+                    weight: '700',
+                    family: Chart.defaults.font.family
+                },
+                titleColor: '#0F172A',
+                bodyColor: '#1E293B',
+                backgroundColor: '#FFFFFF',
+                borderColor: '#E2E8F0',
+                borderWidth: 1,
+                padding: Math.max(6, fontSizes.tooltipBody * 0.5),
+                cornerRadius: Math.max(6, fontSizes.tooltipBody * 0.4),
+                callbacks: {
+                    label: function(context) {
+                        return '₱' + context.raw.toFixed(2);
+                    }
+                }
+            },
+            legend: {
+                labels: {
+                    font: {
+                        size: fontSizes.legend,
+                        weight: '700',
+                        family: Chart.defaults.font.family
+                    },
+                    color: '#0F172A',
+                    usePointStyle: true,
+                    boxWidth: Math.max(10, fontSizes.legend * 0.6),
+                    padding: Math.max(8, fontSizes.legend * 0.7),
+                },
+                position: 'top',
+                align: 'center',
+            }
+        },
+        scales: {
+            x: {
+                ticks: {
+                    font: {
+                        size: fontSizes.xTicks,
+                        weight: '700',
+                        family: Chart.defaults.font.family
+                    },
+                    color: '#0F172A',
+                    autoSkip: true,
+                    maxTicksLimit: window.innerWidth < 576 ? 6 : 12,
+                    maxRotation: window.innerWidth < 576 ? 45 : 30,
+                    minRotation: window.innerWidth < 576 ? 30 : 20,
+                    padding: Math.max(4, fontSizes.xTicks * 0.3),
+                },
+                title: {
+                    display: window.innerWidth > 400, // Hide on very small screens
+                    text: 'Batch',
+                    font: {
+                        size: fontSizes.xTitle,
+                        weight: '800',
+                        family: Chart.defaults.font.family
+                    },
+                    color: '#0F172A',
+                    padding: {
+                        top: Math.max(8, fontSizes.xTitle * 0.5),
+                        bottom: Math.max(4, fontSizes.xTitle * 0.3)
+                    },
+                },
+                grid: {
+                    color: '#CBD5E1',
+                    drawBorder: true,
+                    borderColor: '#CBD5E1',
+                    tickWidth: Math.max(1, fontSizes.xTicks * 0.08),
+                }
+            },
+            y: {
+                ticks: {
+                    font: {
+                        size: fontSizes.yTicks,
+                        weight: '700',
+                        family: Chart.defaults.font.family
+                    },
+                    color: '#0F172A',
+                    padding: Math.max(4, fontSizes.yTicks * 0.4),
+                    callback: function(value) {
+                        if (value >= 1000000) {
+                            return '₱' + (value / 1000000).toFixed(1) + 'M';
+                        } else if (value >= 1000) {
+                            return '₱' + (value / 1000).toFixed(1) + 'k';
+                        }
+                        return '₱' + value.toFixed(0);
+                    },
+                    maxTicksLimit: window.innerWidth < 576 ? 5 : 8,
+                },
+                title: {
+                    display: window.innerWidth > 400, // Hide on very small screens
+                    text: 'Total Sales (₱)',
+                    font: {
+                        size: fontSizes.yTitle,
+                        weight: '800',
+                        family: Chart.defaults.font.family
+                    },
+                    color: '#0F172A',
+                    padding: {
+                        bottom: Math.max(8, fontSizes.yTitle * 0.4),
+                        top: Math.max(4, fontSizes.yTitle * 0.3)
+                    },
+                },
+                grid: {
+                    color: '#CBD5E1',
+                    tickWidth: Math.max(1, fontSizes.yTicks * 0.08),
+                    drawBorder: true,
+                    borderColor: '#CBD5E1',
+                }
+            }
+        },
+        elements: {
+            bar: {
+                borderRadius: fontSizes.barRadius,
+                borderSkipped: false,
+            }
+        },
+        layout: {
+            padding: fontSizes.padding
+        },
+        hover: {
+            mode: 'index',
+            intersect: false,
+            animationDuration: 150,
+        },
+        animation: {
+            duration: 800,
+            easing: 'easeOutQuart',
+        },
+        datasets: {
+            bar: {
+                borderRadius: fontSizes.barRadius,
+                barPercentage: window.innerWidth < 576 ? 0.5 : 0.7,
+                categoryPercentage: window.innerWidth < 576 ? 0.7 : 0.85,
+            }
+        }
+    };
+
+    // Create the chart
+    salesChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: displayLabels,
+            datasets: [{
+                label: 'Total Sales (₱) - Delivered Only (All Batches)',
+                data: displayData,
+                backgroundColor: 'rgba(22, 163, 74, 0.85)',
+                borderColor: '#15803D',
+                borderWidth: Math.max(1, fontSizes.barRadius * 0.15),
+                borderRadius: fontSizes.barRadius,
+                hoverBackgroundColor: '#16A34A',
+                hoverBorderColor: '#166534',
+                hoverBorderWidth: Math.max(1.5, fontSizes.barRadius * 0.2),
+                barPercentage: window.innerWidth < 576 ? 0.5 : 0.7,
+                categoryPercentage: window.innerWidth < 576 ? 0.7 : 0.85,
+            }]
+        },
+        options: chartOptions
+    });
+}
+
+// ==================== WINDOW RESIZE HANDLER ====================
+let resizeTimeout;
+window.addEventListener('resize', function() {
+    clearTimeout(resizeTimeout);
+    resizeTimeout = setTimeout(() => {
+        if (salesChart && chartVisible) {
+            // Only update font sizes, don't reload data
+            const fontSizes = getResponsiveFontSizes();
+
+            // Update chart options with new sizes
+            if (salesChart.options) {
+                salesChart.options.plugins.tooltip.bodyFont.size = fontSizes.tooltipBody;
+                salesChart.options.plugins.tooltip.titleFont.size = fontSizes.tooltipTitle;
+                salesChart.options.plugins.legend.labels.font.size = fontSizes.legend;
+                salesChart.options.scales.x.ticks.font.size = fontSizes.xTicks;
+                salesChart.options.scales.x.title.font.size = fontSizes.xTitle;
+                salesChart.options.scales.y.ticks.font.size = fontSizes.yTicks;
+                salesChart.options.scales.y.title.font.size = fontSizes.yTitle;
+                salesChart.options.elements.bar.borderRadius = fontSizes.barRadius;
+                salesChart.options.layout.padding = fontSizes.padding;
+
+                // Adjust bar sizing for mobile
+                const isMobile = window.innerWidth < 576;
+                salesChart.options.datasets.bar.barPercentage = isMobile ? 0.5 : 0.7;
+                salesChart.options.datasets.bar.categoryPercentage = isMobile ? 0.7 : 0.85;
+
+                // Hide axis titles on very small screens
+                salesChart.options.scales.x.title.display = window.innerWidth > 400;
+                salesChart.options.scales.y.title.display = window.innerWidth > 400;
+
+                // Adjust max ticks based on screen width
+                salesChart.options.scales.x.ticks.maxTicksLimit = window.innerWidth < 576 ? 6 : 12;
+                salesChart.options.scales.y.ticks.maxTicksLimit = window.innerWidth < 576 ? 5 : 8;
+
+                // Adjust rotation for mobile
+                salesChart.options.scales.x.ticks.maxRotation = window.innerWidth < 576 ? 45 : 30;
+                salesChart.options.scales.x.ticks.minRotation = window.innerWidth < 576 ? 30 : 20;
+
+                salesChart.update('none');
+            }
+        }
+    }, 300);
+});
+
+// Helper function to get responsive font sizes (for reuse)
+function getResponsiveFontSizes() {
+    const width = window.innerWidth;
+
+    let sizes = {
+        tooltipBody: 26,
+        tooltipTitle: 28,
+        legend: 28,
+        xTicks: 24,
+        xTitle: 30,
+        yTicks: 24,
+        yTitle: 30,
+        barRadius: 16,
+        padding: { top: 24, bottom: 16, left: 12, right: 12 }
+    };
+
+    if (width >= 769 && width <= 1024) {
+        sizes.tooltipBody = 18;
+        sizes.tooltipTitle = 20;
+        sizes.legend = 18;
+        sizes.xTicks = 16;
+        sizes.xTitle = 20;
+        sizes.yTicks = 16;
+        sizes.yTitle = 20;
+        sizes.barRadius = 12;
+        sizes.padding = { top: 16, bottom: 12, left: 10, right: 10 };
+    }
+    else if (width <= 768) {
+        sizes.tooltipBody = 12;
+        sizes.tooltipTitle = 14;
+        sizes.legend = 12;
+        sizes.xTicks = 10;
+        sizes.xTitle = 14;
+        sizes.yTicks = 10;
+        sizes.yTitle = 14;
+        sizes.barRadius = 8;
+        sizes.padding = { top: 10, bottom: 8, left: 6, right: 6 };
+    }
+    else if (width <= 576) {
+        sizes.tooltipBody = 10;
+        sizes.tooltipTitle = 11;
+        sizes.legend = 10;
+        sizes.xTicks = 8;
+        sizes.xTitle = 11;
+        sizes.yTicks = 8;
+        sizes.yTitle = 11;
+        sizes.barRadius = 6;
+        sizes.padding = { top: 6, bottom: 6, left: 4, right: 4 };
+    }
+    else if (width <= 400) {
+        sizes.tooltipBody = 8;
+        sizes.tooltipTitle = 9;
+        sizes.legend = 8;
+        sizes.xTicks = 7;
+        sizes.xTitle = 9;
+        sizes.yTicks = 7;
+        sizes.yTitle = 9;
+        sizes.barRadius = 4;
+        sizes.padding = { top: 4, bottom: 4, left: 2, right: 2 };
+    }
+    else if (width <= 350) {
+        sizes.tooltipBody = 7;
+        sizes.tooltipTitle = 8;
+        sizes.legend = 7;
+        sizes.xTicks = 6;
+        sizes.xTitle = 8;
+        sizes.yTicks = 6;
+        sizes.yTitle = 8;
+        sizes.barRadius = 3;
+        sizes.padding = { top: 3, bottom: 3, left: 2, right: 2 };
+    }
+
+    return sizes;
+}
     function toggleChart() {
         const chartBody = document.getElementById('chartBody');
         const toggleBtn = document.getElementById('toggleChartBtn');
@@ -1975,8 +2504,8 @@ small, .small {
         }
 
         const message = `Your booking ref is ${bookingRef}. To track, you must go:
-        1. Go to chrome and type surecargotransport.com 
-        2.Click old/trusted customer 
+        1. Go to chrome and type surecargotransport.com
+        2.Click old/trusted customer
         3. Enter Secret Code (Ask secret code for your seller, Humingi ng secret code sa seller mo)
         4. Register/login
         5. Click 3 dots in left top corner
@@ -2059,8 +2588,8 @@ small, .small {
         if (receiverSpan) receiverSpan.innerText = pendingSmsReceiverNumber;
         if (previewSpan) {
             previewSpan.innerHTML = `Your booking ref is ${pendingSmsBookingRef}.To track, you must go:
-        1. Go to chrome and type surecargotransport.com 
-        2.Click old/trusted customer 
+        1. Go to chrome and type surecargotransport.com
+        2.Click old/trusted customer
         3. Enter Secret Code (Ask secret code for your seller, Humingi ng secret code sa seller mo)
         4. Register/login
         5. Click 3 dots in left top corner

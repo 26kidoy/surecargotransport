@@ -3,7 +3,7 @@
 @endphp
 
 <style nonce="{{ $csp_nonce }}">
- /* ============================================================
+/* ============================================================
    SIDEBAR NAVIGATION - DEEPSEEK-STYLE RESPONSIVE STYLES
    Default Minimized (80px) / Expanded (320px)
    With Real-Time Theme Support (Light / Dark / Violet)
@@ -65,6 +65,7 @@
 
 /* ============================================================
    SIDEBAR - DEFAULT MINIMIZED (80px) / EXPANDED (320px)
+   FIXED: Added flex layout to push footer to bottom
    ============================================================ */
 .admin-sidebar {
     width: var(--sidebar-width-collapsed);
@@ -78,6 +79,10 @@
     overflow-x: hidden;
     box-shadow: 4px 0 24px var(--shadow-color);
     color: var(--text-color);
+
+    /* FIX: Flex layout to push footer to bottom */
+    display: flex;
+    flex-direction: column;
 }
 
 /* When expanded (collapsed class removed) */
@@ -199,13 +204,14 @@
 }
 
 /* ============================================================
-   HEADER
+   HEADER - FIXED: Added flex-shrink: 0
    ============================================================ */
 .admin-sidebar .sidebar-header {
     text-align: center;
     padding: var(--sp-md) var(--sp-sm);
     background: linear-gradient(135deg, var(--sidebar-bg-start), var(--sidebar-bg-end) 100%);
     transition: background 0.5s ease, border-color 0.5s ease;
+    flex-shrink: 0; /* FIX: Prevent header from shrinking */
 }
 
 .admin-sidebar:not(.collapsed) .sidebar-header {
@@ -291,9 +297,11 @@
 }
 
 /* ============================================================
-   NAVIGATION
+   NAVIGATION - FIXED: Added flex: 1 and overflow-y: auto
    ============================================================ */
 .sidebar-nav {
+    flex: 1; /* FIX: Take up remaining space */
+    overflow-y: auto; /* FIX: Make nav scrollable if content exceeds */
     padding: var(--sp-xl) 14px;
     list-style: none;
 }
@@ -407,18 +415,17 @@
 .role-auditor { background: rgba(139,92,246,0.1); color: #7C3AED; border: 1px solid rgba(139,92,246,0.2); }
 
 /* ============================================================
-   FOOTER
+   FOOTER - FIXED: Removed absolute positioning, added flex properties
    ============================================================ */
 .sidebar-footer {
+    flex-shrink: 0; /* FIX: Prevent footer from shrinking */
+    margin-top: auto; /* FIX: Push footer to bottom */
     padding: var(--sp-sm);
     border-top: 2px solid var(--border-color);
-    margin-top: auto;
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
     background: linear-gradient(135deg, var(--sidebar-bg-start), var(--sidebar-bg-end) 100%);
     transition: background 0.5s ease, border-color 0.5s ease;
+
+    /* REMOVED: position: absolute, bottom: 0, left: 0, right: 0 */
 }
 
 /* ============================================================
@@ -469,6 +476,60 @@
 }
 
 /* ============================================================
+   HAMBURGER MENU BUTTON - Mobile Only
+   ============================================================ */
+.hamburger-btn {
+    display: none; /* Hidden by default on desktop */
+    position: fixed;
+    top: 10px;
+    left: 10px;
+    z-index: 1060;
+    background: linear-gradient(135deg, var(--sidebar-bg-start), var(--sidebar-bg-end) 100%);
+    border: 2px solid var(--border-color);
+    color: var(--text-color);
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.5s ease, border-color 0.5s ease;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 4px;
+    padding: 10px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.hamburger-btn:hover {
+    transform: scale(1.05);
+    border-color: var(--hover-color);
+}
+
+.hamburger-btn .bar {
+    display: block;
+    width: 22px;
+    height: 2.5px;
+    background: var(--text-color);
+    border-radius: 4px;
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    transform-origin: center;
+}
+
+.hamburger-btn.active .bar:nth-child(1) {
+    transform: rotate(45deg) translate(4px, 4px);
+}
+
+.hamburger-btn.active .bar:nth-child(2) {
+    opacity: 0;
+    transform: scaleX(0);
+}
+
+.hamburger-btn.active .bar:nth-child(3) {
+    transform: rotate(-45deg) translate(5px, -5px);
+}
+
+/* ============================================================
    QUICK SEARCH INDICATOR
    ============================================================ */
 .quick-search-indicator {
@@ -509,7 +570,7 @@
 }
 
 /* ============================================================
-   RESPONSIVE - DEEPSEEK STYLE
+   RESPONSIVE - DEEPSEEK STYLE WITH HAMBURGER
    ============================================================ */
 
 /* --- Tablets & Small Desktops (769px - 992px) --- */
@@ -519,11 +580,21 @@
         --sidebar-width-expanded: 300px;
     }
 
+    /* Show hamburger on tablet */
+    .hamburger-btn {
+        display: flex !important;
+    }
+
     .admin-sidebar {
         transform: translateX(-100%);
         position: fixed;
         z-index: 1050;
         width: var(--sidebar-width-expanded) !important;
+        display: flex;
+        flex-direction: column;
+        top: 0;
+        left: 0;
+        height: 100vh;
     }
 
     .admin-sidebar.open {
@@ -592,11 +663,32 @@
         --sp-xl: 1.5rem;
     }
 
+    /* Show hamburger on mobile */
+    .hamburger-btn {
+        display: flex !important;
+        width: 40px;
+        height: 40px;
+        top: 8px;
+        left: 8px;
+        padding: 8px;
+        border-radius: 10px;
+    }
+
+    .hamburger-btn .bar {
+        width: 20px;
+        height: 2px;
+    }
+
     .admin-sidebar {
         transform: translateX(-100%);
         position: fixed;
         z-index: 1050;
         width: var(--sidebar-width-expanded) !important;
+        display: flex;
+        flex-direction: column;
+        top: 0;
+        left: 0;
+        height: 100vh;
     }
 
     .admin-sidebar.open {
@@ -635,6 +727,7 @@
     .admin-sidebar .sidebar-header {
         text-align: left;
         padding: var(--sp-md) var(--sp-lg);
+        flex-shrink: 0;
     }
 
     .admin-sidebar .toggle-sidebar-btn {
@@ -677,6 +770,8 @@
     }
 
     .sidebar-nav {
+        flex: 1;
+        overflow-y: auto;
         padding: var(--sp-md) 12px;
     }
 
@@ -685,6 +780,8 @@
     }
 
     .sidebar-footer {
+        flex-shrink: 0;
+        margin-top: auto;
         padding: var(--sp-xs);
     }
 
@@ -719,8 +816,24 @@
         --sp-xl: 1.2rem;
     }
 
+    .hamburger-btn {
+        width: 36px;
+        height: 36px;
+        top: 6px;
+        left: 6px;
+        padding: 6px;
+        border-radius: 8px;
+    }
+
+    .hamburger-btn .bar {
+        width: 18px;
+        height: 2px;
+    }
+
     .admin-sidebar {
         width: var(--sidebar-width-expanded) !important;
+        display: flex;
+        flex-direction: column;
     }
 
     .admin-sidebar .nav-link {
@@ -747,6 +860,7 @@
 
     .admin-sidebar .sidebar-header {
         padding: var(--sp-sm) var(--sp-md);
+        flex-shrink: 0;
     }
 
     .admin-sidebar .toggle-sidebar-btn {
@@ -784,7 +898,15 @@
     }
 
     .sidebar-nav {
+        flex: 1;
+        overflow-y: auto;
         padding: var(--sp-sm) 10px;
+    }
+
+    .sidebar-footer {
+        flex-shrink: 0;
+        margin-top: auto;
+        padding: var(--sp-xs);
     }
 
     .quick-search-indicator {
@@ -815,8 +937,24 @@
         --sp-xl: 1rem;
     }
 
+    .hamburger-btn {
+        width: 32px;
+        height: 32px;
+        top: 4px;
+        left: 4px;
+        padding: 5px;
+        border-radius: 6px;
+    }
+
+    .hamburger-btn .bar {
+        width: 16px;
+        height: 1.8px;
+    }
+
     .admin-sidebar {
         width: var(--sidebar-width-expanded) !important;
+        display: flex;
+        flex-direction: column;
     }
 
     .admin-sidebar .nav-link {
@@ -842,6 +980,7 @@
 
     .admin-sidebar .sidebar-header {
         padding: var(--sp-xs) var(--sp-sm);
+        flex-shrink: 0;
     }
 
     .admin-sidebar .toggle-sidebar-btn {
@@ -869,7 +1008,15 @@
     }
 
     .sidebar-nav {
+        flex: 1;
+        overflow-y: auto;
         padding: var(--sp-xs) 8px;
+    }
+
+    .sidebar-footer {
+        flex-shrink: 0;
+        margin-top: auto;
+        padding: var(--sp-xs);
     }
 
     .quick-search-indicator {
@@ -899,8 +1046,24 @@
         --sp-xl: 0.8rem;
     }
 
+    .hamburger-btn {
+        width: 28px;
+        height: 28px;
+        top: 3px;
+        left: 3px;
+        padding: 4px;
+        border-radius: 5px;
+    }
+
+    .hamburger-btn .bar {
+        width: 14px;
+        height: 1.5px;
+    }
+
     .admin-sidebar {
         width: var(--sidebar-width-expanded) !important;
+        display: flex;
+        flex-direction: column;
     }
 
     .admin-sidebar .nav-link {
@@ -945,6 +1108,18 @@
 
     .user-info .text-dark {
         font-size: 0.45rem;
+    }
+
+    .sidebar-nav {
+        flex: 1;
+        overflow-y: auto;
+        padding: var(--sp-xs) 6px;
+    }
+
+    .sidebar-footer {
+        flex-shrink: 0;
+        margin-top: auto;
+        padding: var(--sp-xs);
     }
 }
 
@@ -1174,6 +1349,13 @@
     </div>
 </aside>
 
+<!-- Hamburger Menu Button -->
+<button class="hamburger-btn" id="hamburgerBtn" aria-label="Toggle menu">
+    <span class="bar"></span>
+    <span class="bar"></span>
+    <span class="bar"></span>
+</button>
+
 <script nonce="{{ $csp_nonce }}">
     (function() {
         'use strict';
@@ -1191,10 +1373,8 @@
                 audioElement.preload = 'auto';
                 audioElement.volume = 0.6;
 
-                // Check if audio can be loaded
                 audioElement.addEventListener('canplaythrough', function() {
                     audioLoaded = true;
-                    // Expose audio for theme toggle
                     window.sidebarAudio = audioElement;
                 }, { once: true });
 
@@ -1203,7 +1383,6 @@
                     audioLoaded = true;
                 }, { once: true });
 
-                // Force load
                 audioElement.load();
             } catch (e) {
                 console.warn('Audio not supported, using fallback');
@@ -1214,12 +1393,10 @@
         function playClickSound() {
             try {
                 if (audioElement && audioLoaded) {
-                    // Reset and play
                     audioElement.currentTime = 0;
                     var playPromise = audioElement.play();
                     if (playPromise !== undefined) {
                         playPromise.catch(function(error) {
-                            // Autoplay was prevented, try fallback
                             playFallbackSound();
                         });
                     }
@@ -1233,7 +1410,6 @@
 
         function playFallbackSound() {
             try {
-                // Create a simple click using Web Audio API as fallback
                 var ctx = new (window.AudioContext || window.webkitAudioContext)();
                 var oscillator = ctx.createOscillator();
                 var gainNode = ctx.createGain();
@@ -1255,11 +1431,12 @@
         }
 
         // ================================================================
-        // SIDEBAR FUNCTIONALITY (preserved)
+        // SIDEBAR FUNCTIONALITY
         // ================================================================
         var sidebarEl = document.getElementById('adminSidebar');
         var toggleBtn = document.getElementById('toggleSidebarBtn');
         var toggleIconSvg = toggleBtn ? toggleBtn.querySelector('svg') : null;
+        var hamburgerBtn = document.getElementById('hamburgerBtn');
 
         var VERSION_KEY = 'sidebar_version_v3_min80';
         var COLLAPSED_KEY = 'sidebarCollapsed';
@@ -1296,14 +1473,15 @@
             updateChevronIcon(false);
         }
 
-        // Initialize audio on any user interaction
         function ensureAudioInit() {
             if (!audioLoaded) {
                 initAudio();
             }
         }
 
-        // Toggle with click sound
+        // ================================================================
+        // TOGGLE SIDEBAR (Desktop expand/collapse)
+        // ================================================================
         if (toggleBtn) {
             toggleBtn.addEventListener('click', function(e) {
                 e.stopPropagation();
@@ -1323,7 +1501,37 @@
             });
         }
 
-        // Ripple effect + click sound on nav links
+        // ================================================================
+        // HAMBURGER MENU (Mobile toggle)
+        // ================================================================
+        if (hamburgerBtn) {
+            hamburgerBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                ensureAudioInit();
+                playClickSound();
+
+                // Toggle sidebar open class
+                sidebarEl.classList.toggle('open');
+
+                // Toggle hamburger active state
+                this.classList.toggle('active');
+
+                // Update overlay
+                overlay.style.opacity = sidebarEl.classList.contains('open') ? '1' : '0';
+                overlay.style.pointerEvents = sidebarEl.classList.contains('open') ? 'auto' : 'none';
+
+                // Close sidebar when clicking outside
+                if (sidebarEl.classList.contains('open')) {
+                    document.body.style.overflow = 'hidden';
+                } else {
+                    document.body.style.overflow = '';
+                }
+            });
+        }
+
+        // ================================================================
+        // RIPPLE EFFECT + CLICK SOUND ON NAV LINKS
+        // ================================================================
         var navLinks = document.querySelectorAll('.nav-link');
         for (var i = 0; i < navLinks.length; i++) {
             (function(link) {
@@ -1343,40 +1551,40 @@
                     setTimeout(function() {
                         if (ripple.parentNode) ripple.remove();
                     }, 600);
+
+                    // Close sidebar on mobile after navigation
+                    if (window.innerWidth <= 992) {
+                        sidebarEl.classList.remove('open');
+                        if (hamburgerBtn) hamburgerBtn.classList.remove('active');
+                        overlay.style.opacity = '0';
+                        overlay.style.pointerEvents = 'none';
+                        document.body.style.overflow = '';
+                    }
                 });
             })(navLinks[i]);
         }
 
         // ================================================================
-        // MOBILE OVERLAY (preserved)
+        // MOBILE OVERLAY
         // ================================================================
         var overlay = document.querySelector('.sidebar-overlay');
         if (!overlay) {
             overlay = document.createElement('div');
             overlay.className = 'sidebar-overlay';
-            overlay.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.3);z-index:1040;opacity:0;pointer-events:none;transition:opacity 0.3s;';
+            overlay.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.4);z-index:1040;opacity:0;pointer-events:none;transition:opacity 0.3s ease;';
             document.body.appendChild(overlay);
-        }
-
-        var mobileToggle = document.getElementById('mobileMenuToggle');
-        if (mobileToggle) {
-            mobileToggle.addEventListener('click', function() {
-                ensureAudioInit();
-                playClickSound();
-                sidebarEl.classList.toggle('open');
-                overlay.style.opacity = sidebarEl.classList.contains('open') ? '1' : '0';
-                overlay.style.pointerEvents = sidebarEl.classList.contains('open') ? 'auto' : 'none';
-            });
         }
 
         overlay.addEventListener('click', function() {
             sidebarEl.classList.remove('open');
+            if (hamburgerBtn) hamburgerBtn.classList.remove('active');
             overlay.style.opacity = '0';
             overlay.style.pointerEvents = 'none';
+            document.body.style.overflow = '';
         });
 
         // ================================================================
-        // KEYBOARD SHORTCUTS (preserved)
+        // KEYBOARD SHORTCUTS
         // ================================================================
         document.addEventListener('keydown', function(e) {
             if ((e.ctrlKey || e.metaKey) && e.key === 'b') {
@@ -1385,13 +1593,15 @@
             }
             if (e.key === 'Escape' && sidebarEl.classList.contains('open')) {
                 sidebarEl.classList.remove('open');
+                if (hamburgerBtn) hamburgerBtn.classList.remove('active');
                 overlay.style.opacity = '0';
                 overlay.style.pointerEvents = 'none';
+                document.body.style.overflow = '';
             }
         });
 
         // ================================================================
-        // QUICK SEARCH (preserved, with sound on match)
+        // QUICK SEARCH
         // ================================================================
         (function() {
             var searchQuery = '';
@@ -1483,10 +1693,9 @@
         })();
 
         // ================================================================
-        // CLICK SOUND - also trigger on any sidebar click (for safety)
+        // CLICK SOUND - Safety trigger
         // ================================================================
         sidebarEl.addEventListener('click', function(e) {
-            // Don't double-trigger if it's already handled by nav-link or toggle
             if (e.target.closest && (e.target.closest('.nav-link') || e.target.closest('#toggleSidebarBtn'))) {
                 return;
             }
@@ -1494,7 +1703,9 @@
             playClickSound();
         });
 
-        // Initialize audio on first user interaction
+        // ================================================================
+        // INITIALIZE AUDIO
+        // ================================================================
         var firstInteraction = function() {
             ensureAudioInit();
             document.removeEventListener('click', firstInteraction);
@@ -1505,13 +1716,29 @@
         document.addEventListener('keydown', firstInteraction);
         document.addEventListener('touchstart', firstInteraction);
 
-        // Also try to preload audio immediately
         setTimeout(function() {
             initAudio();
         }, 100);
 
-        // Expose click sound for theme toggle in app layout
         window.playClickSound = playClickSound;
+
+        // ================================================================
+        // HANDLE WINDOW RESIZE - Close mobile menu on resize to desktop
+        // ================================================================
+        var resizeTimer;
+        window.addEventListener('resize', function() {
+            clearTimeout(resizeTimer);
+            resizeTimer = setTimeout(function() {
+                if (window.innerWidth > 992 && sidebarEl.classList.contains('open')) {
+                    sidebarEl.classList.remove('open');
+                    if (hamburgerBtn) hamburgerBtn.classList.remove('active');
+                    overlay.style.opacity = '0';
+                    overlay.style.pointerEvents = 'none';
+                    document.body.style.overflow = '';
+                }
+            }, 250);
+        });
 
     })();
 </script>
+

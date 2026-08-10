@@ -13,9 +13,9 @@
     <link rel="icon" type="image/jpeg" href="{{ asset('assets/icon.png') }}">
     {{-- Main layout styles --}}
     <style nonce="{{ $csp_nonce ?? '' }}">
-      /* ============================================================
-   ADMIN LAYOUT - DEEPSEEK-STYLE RESPONSIVE STYLES
-   With Theme Support (Light / Dark / Violet)
+/* ============================================================
+   ADMIN LAYOUT - LIGHT/DARK/VIOLET THEME
+   FIXED: Mobile content width 98%, padding 3px
    ============================================================ */
 
 :root {
@@ -173,13 +173,28 @@ body {
 }
 
 /* ============================================================
-   SCROLLABLE CONTENT AREA
+   SCROLLABLE CONTENT AREA - FIXED FOR MOBILE
    ============================================================ */
 .content-area {
     margin-top: 70px;
     padding: var(--sp-xl) var(--sp-xxl) var(--sp-xl) var(--sp-xxl);
     flex: 1;
     transition: padding 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    max-width: 100%;
+}
+
+/* ============================================================
+   CONTENT CARD
+   ============================================================ */
+.content-card {
+    background: var(--content-bg);
+    backdrop-filter: blur(4px);
+    border-radius: 24px;
+    padding: var(--sp-xl);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.04);
+    border: 1px solid var(--card-border);
+    color: var(--text-color);
+    max-width: 100%;
 }
 
 /* ============================================================
@@ -330,19 +345,6 @@ body {
 }
 
 /* ============================================================
-   CONTENT CARD
-   ============================================================ */
-.content-card {
-    background: var(--content-bg);
-    backdrop-filter: blur(4px);
-    border-radius: 24px;
-    padding: var(--sp-xl);
-    box-shadow: 0 8px 32px rgba(0,0,0,0.04);
-    border: 1px solid var(--card-border);
-    color: var(--text-color);
-}
-
-/* ============================================================
    SIDEBAR ICONS
    ============================================================ */
 .admin-sidebar i,
@@ -354,7 +356,7 @@ body {
 }
 
 /* ============================================================
-   RESPONSIVE - DEEPSEEK STYLE
+   RESPONSIVE - FIXED FOR MOBILE
    ============================================================ */
 
 /* --- Tablets & Small Desktops (769px - 992px) --- */
@@ -394,6 +396,7 @@ body {
     .content-area {
         padding: var(--sp-md) var(--sp-md) var(--sp-md) var(--sp-md);
         margin-top: 60px;
+        max-width: 100%;
     }
 
     .top-navbar .navbar-title h5 {
@@ -425,10 +428,11 @@ body {
     .content-card {
         padding: var(--sp-lg);
         border-radius: 20px;
+        max-width: 100%;
     }
 }
 
-/* --- Mobile Devices (≤ 768px) --- */
+/* --- Mobile Devices (≤ 768px) - FIXED: 98% width, 3px padding --- */
 @media (max-width: 768px) {
     :root {
         --font-xs: 0.7rem;
@@ -450,21 +454,32 @@ body {
 
     .main-content {
         margin-left: 0 !important;
+        width: 100% !important;
     }
 
     .top-navbar {
         left: 0 !important;
         padding: var(--sp-sm) var(--sp-md);
         min-height: 60px;
+        padding-left: 56px; /* Space for hamburger button */
+        width: 100% !important;
     }
 
     .admin-sidebar:not(.collapsed) ~ .main-content .top-navbar {
         left: 0 !important;
     }
 
+    /* FIXED: Content area - 98% width, 3px padding */
     .content-area {
-        padding: var(--sp-md) var(--sp-md) var(--sp-md) var(--sp-md);
+        padding: 3px !important;
         margin-top: 60px;
+        width: 98% !important;
+        max-width: 98% !important;
+        margin-left: auto !important;
+        margin-right: auto !important;
+        display: block !important;
+        flex: 1;
+        box-sizing: border-box !important;
     }
 
     .top-navbar .navbar-title h5 {
@@ -508,16 +523,18 @@ body {
     }
 
     .content-card {
-        padding: var(--sp-md);
-        border-radius: 18px;
+        padding: var(--sp-md) !important;
+        border-radius: 18px !important;
+        max-width: 100% !important;
+        width: 100% !important;
+        box-sizing: border-box !important;
     }
 
     .navbar-actions {
         gap: var(--sp-xs);
     }
 }
-
-/* --- Small Phones (≤ 576px) --- */
+/* --- Small Phones (≤ 576px) - FIXED --- */
 @media (max-width: 576px) {
     :root {
         --font-xs: 0.65rem;
@@ -540,6 +557,8 @@ body {
     .top-navbar {
         padding: var(--sp-xs) var(--sp-sm);
         min-height: 50px;
+        padding-left: 46px;
+        width: 100% !important;
     }
 
     .top-navbar .navbar-title h5 {
@@ -555,24 +574,47 @@ body {
     }
 
     .content-area {
-        padding: var(--sp-sm) var(--sp-sm) var(--sp-sm) var(--sp-sm);
+        padding: 3px !important;
         margin-top: 50px;
+        width: 98% !important;
+        max-width: 98% !important;
+        margin-left: auto !important;
+        margin-right: auto !important;
     }
 
+    /* FIXED: Logout button - consistent styling */
     .btn-logout {
         font-size: var(--font-xs) !important;
-        padding: var(--sp-xs) var(--sp-sm);
-        min-height: 32px;
-        border-radius: 24px;
+        padding: var(--sp-xs) var(--sp-sm) !important;
+        min-height: 32px !important;
+        min-width: 32px !important;
+        border-radius: 8px !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        gap: 4px !important;
+        background: linear-gradient(135deg, white, hsl(278, 88%, 77%) 100%) !important;
+        border: none !important;
+        cursor: pointer !important;
+        transition: all 0.2s ease !important;
+        color: red !important;
+        font-weight: 600 !important;
+        box-shadow: inset 2px 5px 3px rgba(0,0,0,0.1) !important;
+    }
+
+    .btn-logout:hover {
+        transform: scale(1.05) !important;
+        box-shadow: 0 6px 12px rgba(220,38,38,0.3) !important;
     }
 
     .btn-logout span {
-        display: none;
+        display: none !important;
     }
 
     .btn-logout svg {
-        width: 12px;
-        height: 12px;
+        width: 14px !important;
+        height: 14px !important;
+        flex-shrink: 0 !important;
     }
 
     .theme-btn {
@@ -600,8 +642,10 @@ body {
     }
 
     .content-card {
-        padding: var(--sp-sm);
-        border-radius: 14px;
+        padding: var(--sp-sm) !important;
+        border-radius: 14px !important;
+        width: 100% !important;
+        max-width: 100% !important;
     }
 
     .navbar-actions {
@@ -609,7 +653,7 @@ body {
     }
 }
 
-/* --- Very Small Phones (≤ 400px) --- */
+/* --- Very Small Phones (≤ 400px) - FIXED --- */
 @media (max-width: 400px) {
     :root {
         --font-xs: 0.6rem;
@@ -632,6 +676,8 @@ body {
     .top-navbar {
         padding: 0.05rem var(--sp-xs);
         min-height: 44px;
+        padding-left: 40px;
+        width: 100% !important;
     }
 
     .top-navbar .navbar-title h5 {
@@ -639,20 +685,43 @@ body {
     }
 
     .content-area {
-        padding: var(--sp-xs);
+        padding: 3px !important;
         margin-top: 44px;
+        width: 98% !important;
+        max-width: 98% !important;
+        margin-left: auto !important;
+        margin-right: auto !important;
     }
 
+    /* FIXED: Logout button - consistent styling */
     .btn-logout {
         font-size: 0.5rem !important;
-        padding: 0.05rem var(--sp-xs);
-        min-height: 28px;
-        border-radius: 20px;
+        padding: 0.05rem var(--sp-xs) !important;
+        min-height: 28px !important;
+        min-width: 28px !important;
+        border-radius: 6px !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        gap: 3px !important;
+        background: linear-gradient(135deg, white, hsl(278, 88%, 77%) 100%) !important;
+        border: none !important;
+        cursor: pointer !important;
+        transition: all 0.2s ease !important;
+        color: red !important;
+        font-weight: 600 !important;
+        box-shadow: inset 2px 5px 3px rgba(0,0,0,0.1) !important;
+    }
+
+    .btn-logout:hover {
+        transform: scale(1.05) !important;
+        box-shadow: 0 6px 12px rgba(220,38,38,0.3) !important;
     }
 
     .btn-logout svg {
-        width: 10px;
-        height: 10px;
+        width: 12px !important;
+        height: 12px !important;
+        flex-shrink: 0 !important;
     }
 
     .theme-btn {
@@ -674,12 +743,14 @@ body {
     }
 
     .content-card {
-        padding: var(--sp-xs);
-        border-radius: 12px;
+        padding: var(--sp-xs) !important;
+        border-radius: 12px !important;
+        width: 100% !important;
+        max-width: 100% !important;
     }
 }
 
-/* --- Extra Small (≤ 350px) --- */
+/* --- Extra Small (≤ 350px) - FIXED --- */
 @media (max-width: 350px) {
     :root {
         --font-xs: 0.5rem;
@@ -703,9 +774,43 @@ body {
         font-size: 0.45rem !important;
     }
 
+    .content-area {
+        padding: 3px !important;
+        width: 98% !important;
+        max-width: 98% !important;
+        margin-left: auto !important;
+        margin-right: auto !important;
+    }
+
+    /* FIXED: Logout button - consistent styling */
     .btn-logout {
         font-size: 0.4rem !important;
-        min-height: 24px;
+        padding: 0.05rem var(--sp-xs) !important;
+        min-height: 24px !important;
+        min-width: 24px !important;
+        border-radius: 4px !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        gap: 2px !important;
+        background: linear-gradient(135deg, white, hsl(278, 88%, 77%) 100%) !important;
+        border: none !important;
+        cursor: pointer !important;
+        transition: all 0.2s ease !important;
+        color: red !important;
+        font-weight: 600 !important;
+        box-shadow: inset 2px 5px 3px rgba(0,0,0,0.1) !important;
+    }
+
+    .btn-logout:hover {
+        transform: scale(1.05) !important;
+        box-shadow: 0 6px 12px rgba(220,38,38,0.3) !important;
+    }
+
+    .btn-logout svg {
+        width: 10px !important;
+        height: 10px !important;
+        flex-shrink: 0 !important;
     }
 
     .theme-btn {
@@ -721,10 +826,112 @@ body {
     }
 
     .content-card {
-        padding: 0.05rem;
-        border-radius: 10px;
+        padding: 0.05rem !important;
+        border-radius: 10px !important;
+        width: 100% !important;
+        max-width: 100% !important;
     }
 }
+
+/* ============================================================
+   FIX: Prevent horizontal scroll on all devices
+   ============================================================ */
+.container,
+.container-fluid,
+.row,
+.col-12,
+.col-sm-6,
+.col-md-4,
+.col-lg-3 {
+    max-width: 100% !important;
+    overflow-x: hidden !important;
+}
+
+/* ============================================================
+   FIX: Ensure content card fills width on mobile
+   ============================================================ */
+@media (max-width: 768px) {
+    .content-card {
+        width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box !important;
+        overflow-x: hidden !important;
+    }
+
+    .content-card * {
+        max-width: 100% !important;
+        overflow-x: hidden !important;
+        word-wrap: break-word !important;
+    }
+
+    .content-card .table-responsive {
+        width: 100% !important;
+        max-width: 100% !important;
+        overflow-x: auto !important;
+        -webkit-overflow-scrolling: touch !important;
+    }
+}
+
+/* ============================================================
+   BASE LOGOUT BUTTON - Consistent across all sizes
+   ============================================================ */
+.btn-logout {
+    font-size: var(--font-base) !important;
+    padding: var(--sp-xs) var(--sp-lg) !important;
+    min-height: 40px !important;
+    min-width: 40px !important;
+    border-radius: 8px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 6px !important;
+    background: linear-gradient(135deg, white, hsl(278, 88%, 77%) 100%) !important;
+    border: none !important;
+    cursor: pointer !important;
+    transition: all 0.2s ease !important;
+    color: red !important;
+    font-weight: 600 !important;
+    box-shadow: inset 2px 5px 3px rgba(0,0,0,0.1) !important;
+}
+
+.btn-logout:hover {
+    transform: scale(1.05) !important;
+    box-shadow: 0 6px 12px rgba(220,38,38,0.3) !important;
+    color: red !important;
+}
+
+.btn-logout svg {
+    width: 16px !important;
+    height: 16px !important;
+    stroke: currentColor !important;
+    stroke-width: 2 !important;
+    fill: none !important;
+    flex-shrink: 0 !important;
+}
+
+.btn-logout span {
+    font-size: inherit !important;
+    font-weight: 600 !important;
+}
+
+/* Tablet size */
+@media (min-width: 769px) and (max-width: 1024px) {
+    .btn-logout {
+        font-size: var(--font-sm) !important;
+        padding: var(--sp-xs) var(--sp-md) !important;
+        min-height: 36px !important;
+        min-width: 36px !important;
+        border-radius: 6px !important;
+        gap: 4px !important;
+    }
+
+    .btn-logout svg {
+        width: 14px !important;
+        height: 14px !important;
+    }
+}
+
+/* Desktop base - already defined above */
 
 /* ============================================================
    HIDDEN AUDIO
@@ -882,7 +1089,6 @@ body {
 
                     // Play click sound if available from sidebar
                     try {
-                        // Check if sidebar click sound function exists
                         if (typeof window.playClickSound === 'function') {
                             window.playClickSound();
                         }
@@ -895,11 +1101,8 @@ body {
             // ================================================================
             // EXPOSE PLAY CLICK SOUND FOR SIDEBAR INTEGRATION
             // ================================================================
-            // We'll store a reference to the click sound function
-            // so sidebar can use it if needed
             window.playClickSound = function() {
                 try {
-                    // Try to use sidebar's audio if available
                     if (window.sidebarAudio && window.sidebarAudio.play) {
                         window.sidebarAudio.currentTime = 0;
                         const promise = window.sidebarAudio.play();
@@ -908,7 +1111,6 @@ body {
                         }
                         return;
                     }
-                    // Fallback: create a simple beep
                     const ctx = new (window.AudioContext || window.webkitAudioContext)();
                     const oscillator = ctx.createOscillator();
                     const gainNode = ctx.createGain();
@@ -924,6 +1126,29 @@ body {
                     // Silent fail
                 }
             };
+
+            // ================================================================
+            // HAMBURGER MENU - Ensure active state sync with sidebar
+            // ================================================================
+            const hamburgerBtn = document.getElementById('hamburgerBtn');
+            const sidebarEl = document.getElementById('adminSidebar');
+
+            if (hamburgerBtn && sidebarEl) {
+                // Listen for sidebar open/close events to sync hamburger
+                const observer = new MutationObserver(function(mutations) {
+                    mutations.forEach(function(mutation) {
+                        if (mutation.attributeName === 'class') {
+                            if (sidebarEl.classList.contains('open')) {
+                                hamburgerBtn.classList.add('active');
+                            } else {
+                                hamburgerBtn.classList.remove('active');
+                            }
+                        }
+                    });
+                });
+
+                observer.observe(sidebarEl, { attributes: true });
+            }
         });
     </script>
 

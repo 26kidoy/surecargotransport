@@ -14,8 +14,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css">
 
     <style nonce="{{ $csp_nonce }}">
-       /* ============================================================
-   ABOUT PAGE - DEEPSEEK-STYLE RESPONSIVE STYLES
+ /* ============================================================
+   ABOUT PAGE - DEEPSEEK-STYLE RESPONSIVE STYLES (FIXED)
    ============================================================ */
 
 :root {
@@ -49,7 +49,7 @@
 }
 
 /* ============================================================
-   RESET & GLOBAL
+   RESET & GLOBAL - FIXED FOR MOBILE
    ============================================================ */
 * {
     margin: 0;
@@ -60,6 +60,9 @@
 html {
     font-size: 16px;
     -webkit-text-size-adjust: 100%;
+    overflow-x: hidden !important;
+    width: 100% !important;
+    max-width: 100% !important;
 }
 
 body {
@@ -70,12 +73,14 @@ body {
     color: var(--text-body);
     background-color: var(--bg-light);
     position: relative;
-    overflow-x: hidden;
+    overflow-x: hidden !important;
+    width: 100% !important;
+    max-width: 100% !important;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
 }
 
-/* Background Image with overlay */
+/* Background Image with overlay - FIXED FOR MOBILE */
 body::before {
     content: '';
     position: fixed;
@@ -179,17 +184,18 @@ h6 {
 }
 
 /* ============================================================
-   CONTAINER
+   CONTAINER - FIXED FOR MOBILE
    ============================================================ */
 .container, .container-lg {
     max-width: 1280px;
     padding-left: var(--sp-lg);
     padding-right: var(--sp-lg);
     margin: 0 auto;
+    overflow-x: hidden !important;
 }
 
 /* ============================================================
-   NAVBAR - MOBILE FIRST
+   NAVBAR - MOBILE FIRST - FIXED
    ============================================================ */
 .navbar {
     background: rgba(255, 255, 255, 0.92);
@@ -200,6 +206,9 @@ h6 {
     position: sticky;
     top: 0;
     z-index: 1000;
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow: hidden !important;
 }
 
 .nav-container {
@@ -210,6 +219,7 @@ h6 {
     flex-wrap: wrap;
     max-width: 1280px;
     margin: 0 auto;
+    overflow: hidden !important;
 }
 
 .logo {
@@ -373,7 +383,7 @@ h6 {
 }
 
 /* ============================================================
-   LAYOUT & COMPONENTS
+   LAYOUT & COMPONENTS - FIXED FOR MOBILE
    ============================================================ */
 .card-flat {
     background: var(--white);
@@ -383,10 +393,11 @@ h6 {
     transition: all 0.25s ease;
     border: 1px solid var(--border-light);
     height: 100%;
+    overflow: hidden !important;
 }
 
 .card-flat:hover {
-    transform: translateY(-5px);
+    transform: translateY(-5px) !important;
     box-shadow: 0 25px 50px rgba(0, 0, 0, 0.08);
 }
 
@@ -420,17 +431,20 @@ h6 {
     border-radius: 50%;
     border: 4px solid var(--primary-color);
     margin-bottom: var(--sp-md);
+    max-width: 100% !important;
 }
 
 .section-light {
     background: rgba(250, 252, 255, 0.92);
     backdrop-filter: blur(2px);
     padding: var(--sp-xxl) 0;
+    overflow: hidden !important;
 }
 
 .section-white {
     background: rgba(255, 255, 255, 0.92);
     padding: var(--sp-xxl) 0;
+    overflow: hidden !important;
 }
 
 .footer {
@@ -470,7 +484,7 @@ h6 {
 }
 
 /* ============================================================
-   RESPONSIVE - DEEPSEEK STYLE
+   RESPONSIVE - DEEPSEEK STYLE (FIXED)
    ============================================================ */
 
 /* --- Tablets & Small Desktops (769px - 1024px) --- */
@@ -546,7 +560,7 @@ h6 {
     }
 }
 
-/* --- Mobile Devices (≤ 768px) --- */
+/* --- Mobile Devices (≤ 768px) - FIXED --- */
 @media (max-width: 768px) {
     :root {
         --font-xs: 0.7rem;
@@ -567,8 +581,18 @@ h6 {
         --sp-xxl: 2rem;
     }
 
+    body::before {
+        background-attachment: scroll !important;
+        position: absolute !important;
+    }
+
+    body::after {
+        position: absolute !important;
+    }
+
     .navbar {
         padding: var(--sp-sm) var(--sp-md);
+        width: 100% !important;
     }
 
     .logo {
@@ -587,8 +611,23 @@ h6 {
     }
 
     .container, .container-lg {
-        padding-left: var(--sp-md);
-        padding-right: var(--sp-md);
+        padding-left: 15px !important;
+        padding-right: 15px !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        overflow-x: hidden !important;
+    }
+
+    .row {
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+        width: 100% !important;
+        max-width: 100% !important;
+    }
+
+    .col-md-4, .col-md-6, .col-lg-3, .col-md-3, .col-sm-6 {
+        padding-left: 10px !important;
+        padding-right: 10px !important;
     }
 
     .card-flat {
@@ -674,9 +713,14 @@ h6 {
     .badge-soft, .small-text, small {
         font-size: var(--font-xs) !important;
     }
+
+    img {
+        max-width: 100% !important;
+        height: auto !important;
+    }
 }
 
-/* --- Small Phones (≤ 480px) --- */
+/* --- Small Phones (≤ 480px) - FIXED --- */
 @media (max-width: 480px) {
     :root {
         --font-xs: 0.65rem;
@@ -724,8 +768,8 @@ h6 {
     }
 
     .container, .container-lg {
-        padding-left: var(--sp-sm);
-        padding-right: var(--sp-sm);
+        padding-left: var(--sp-sm) !important;
+        padding-right: var(--sp-sm) !important;
     }
 
     .card-flat {
@@ -819,12 +863,12 @@ h6 {
     }
 
     .col-md-4, .col-md-6, .col-lg-3 {
-        padding-left: var(--sp-xs);
-        padding-right: var(--sp-xs);
+        padding-left: var(--sp-xs) !important;
+        padding-right: var(--sp-xs) !important;
     }
 }
 
-/* --- Very Small Phones (≤ 400px) --- */
+/* --- Very Small Phones (≤ 400px) - FIXED --- */
 @media (max-width: 400px) {
     :root {
         --font-xs: 0.6rem;
@@ -928,7 +972,7 @@ h6 {
     }
 }
 
-/* --- Extra Small (≤ 350px) --- */
+/* --- Extra Small (≤ 350px) - FIXED --- */
 @media (max-width: 350px) {
     :root {
         --font-xs: 0.5rem;
@@ -1029,15 +1073,17 @@ h6 {
 .gap-5 { gap: var(--sp-xl) !important; }
 
 /* ============================================================
-   HIDDEN AUDIO
+   HIDDEN AUDIO - FIXED
    ============================================================ */
 #bgAudio {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    opacity: 0;
-    pointer-events: none;
-    user-select: none;
+    position: absolute !important;
+    width: 0 !important;
+    height: 0 !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+    user-select: none !important;
+    overflow: hidden !important;
+    display: none !important;
 }
     </style>
 </head>

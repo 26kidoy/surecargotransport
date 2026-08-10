@@ -984,14 +984,148 @@ canvas {
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script nonce="{{ $csp_nonce }}">
+    // ==================== RESPONSIVE FONT HELPER ====================
+    function getResponsiveChartFonts() {
+        const width = window.innerWidth;
+
+        let sizes = {
+            title: 14,
+            legend: 14,
+            tick: 13,
+            tooltipTitle: 14,
+            tooltipBody: 13,
+            axisTitle: 14,
+            doughnutCutout: '65%',
+            barRadius: 10,
+            pointRadius: 6,
+            padding: 12
+        };
+
+        // Tablet (769px - 1024px)
+        if (width >= 769 && width <= 1024) {
+            sizes.title = 12;
+            sizes.legend = 12;
+            sizes.tick = 11;
+            sizes.tooltipTitle = 12;
+            sizes.tooltipBody = 11;
+            sizes.axisTitle = 12;
+            sizes.doughnutCutout = '60%';
+            sizes.barRadius = 8;
+            sizes.pointRadius = 5;
+            sizes.padding = 10;
+        }
+        // Mobile (≤ 768px)
+        else if (width <= 768) {
+            sizes.title = 10;
+            sizes.legend = 10;
+            sizes.tick = 9;
+            sizes.tooltipTitle = 10;
+            sizes.tooltipBody = 9;
+            sizes.axisTitle = 10;
+            sizes.doughnutCutout = '55%';
+            sizes.barRadius = 6;
+            sizes.pointRadius = 4;
+            sizes.padding = 8;
+        }
+        // Small phones (≤ 576px)
+        else if (width <= 576) {
+            sizes.title = 8;
+            sizes.legend = 8;
+            sizes.tick = 7;
+            sizes.tooltipTitle = 8;
+            sizes.tooltipBody = 7;
+            sizes.axisTitle = 8;
+            sizes.doughnutCutout = '50%';
+            sizes.barRadius = 4;
+            sizes.pointRadius = 3;
+            sizes.padding = 6;
+        }
+        // Very small phones (≤ 400px)
+        else if (width <= 400) {
+            sizes.title = 7;
+            sizes.legend = 7;
+            sizes.tick = 6;
+            sizes.tooltipTitle = 7;
+            sizes.tooltipBody = 6;
+            sizes.axisTitle = 7;
+            sizes.doughnutCutout = '45%';
+            sizes.barRadius = 3;
+            sizes.pointRadius = 2;
+            sizes.padding = 4;
+        }
+
+        return sizes;
+    }
+
     // ==================== GLOBAL CHART RULE - Violet Theme ====================
-    Chart.defaults.font.size = 14;
+    const fontSizes = getResponsiveChartFonts();
+    Chart.defaults.font.size = fontSizes.title;
     Chart.defaults.font.weight = '600';
     Chart.defaults.color = '#2c2c3e';
 
     // ==================== GLOBAL CHART REFERENCES ====================
     let activityChart, roleChart, paymentsBarChart, topUsersChart;
     let modalActivityChart, modalRoleChart, modalPaymentsChart, modalUsersChart;
+
+    // ==================== RESPONSIVE CHART OPTIONS BUILDER ====================
+    function buildBaseOptions(customOptions = {}) {
+        const sizes = getResponsiveChartFonts();
+        return {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: {
+                legend: {
+                    labels: {
+                        font: { size: sizes.legend, weight: '600' },
+                        color: '#2c2c3e',
+                        usePointStyle: true,
+                        pointStyle: 'circle',
+                        padding: Math.max(8, sizes.legend * 1.2)
+                    },
+                    position: window.innerWidth < 576 ? 'bottom' : 'top'
+                },
+                tooltip: {
+                    backgroundColor: '#4a148c',
+                    padding: Math.max(6, sizes.padding),
+                    cornerRadius: Math.max(6, sizes.padding * 0.8),
+                    titleFont: { size: sizes.tooltipTitle, weight: '600' },
+                    bodyFont: { size: sizes.tooltipBody, weight: '500' }
+                },
+                ...customOptions.plugins
+            },
+            scales: {
+                y: {
+                    grid: { color: '#d1c4e9', lineWidth: 1 },
+                    ticks: {
+                        color: '#2c2c3e',
+                        font: { size: sizes.tick, weight: '600' },
+                        maxTicksLimit: window.innerWidth < 576 ? 5 : 8
+                    },
+                    title: {
+                        display: window.innerWidth > 400,
+                        color: '#6c6c80',
+                        font: { size: sizes.axisTitle, weight: '600' }
+                    }
+                },
+                x: {
+                    ticks: {
+                        color: '#2c2c3e',
+                        font: { size: sizes.tick, weight: '600' },
+                        maxTicksLimit: window.innerWidth < 576 ? 6 : 12,
+                        maxRotation: window.innerWidth < 576 ? 45 : 30
+                    },
+                    grid: { display: false },
+                    title: {
+                        display: window.innerWidth > 400,
+                        color: '#6c6c80',
+                        font: { size: sizes.axisTitle, weight: '600' }
+                    }
+                },
+                ...customOptions.scales
+            },
+            ...customOptions
+        };
+    }
 
     // ==================== ROLE DISTRIBUTION CHART ====================
     @php
@@ -1003,6 +1137,7 @@ canvas {
     @endphp
     const roleCtx = document.getElementById('roleChart')?.getContext('2d');
     if(roleCtx) {
+        const roleSizes = getResponsiveChartFonts();
         roleChart = new Chart(roleCtx, {
             type: 'doughnut',
             data: {
@@ -1011,33 +1146,33 @@ canvas {
                     data: [{{ $roleCounts['super_admin'] }}, {{ $roleCounts['fleet_manager'] }}, {{ $roleCounts['auditor'] }}],
                     backgroundColor: ['#7b1fa2', '#9c27b0', '#d1c4e9'],
                     borderColor: ['#4a148c', '#7b1fa2', '#b39ddb'],
-                    borderWidth: 2,
-                    hoverOffset: 12,
-                    borderRadius: 8,
-                    spacing: 6
+                    borderWidth: Math.max(1, roleSizes.barRadius * 0.2),
+                    hoverOffset: window.innerWidth < 576 ? 6 : 12,
+                    borderRadius: Math.max(4, roleSizes.barRadius * 0.6),
+                    spacing: Math.max(3, roleSizes.barRadius * 0.4)
                 }]
             },
             options: {
                 responsive: true,
                 maintainAspectRatio: true,
-                cutout: '65%',
+                cutout: roleSizes.doughnutCutout,
                 plugins: {
                     legend: {
-                        position: 'bottom',
+                        position: window.innerWidth < 576 ? 'bottom' : 'bottom',
                         labels: {
-                            font: { size: 14, weight: '600' },
+                            font: { size: roleSizes.legend, weight: '600' },
                             color: '#2c2c3e',
                             usePointStyle: true,
                             pointStyle: 'circle',
-                            padding: 16
+                            padding: Math.max(8, roleSizes.legend * 1.2)
                         }
                     },
                     tooltip: {
                         backgroundColor: '#4a148c',
-                        padding: 12,
-                        cornerRadius: 12,
-                        titleFont: { size: 14, weight: '600' },
-                        bodyFont: { size: 13, weight: '500' },
+                        padding: Math.max(6, roleSizes.padding),
+                        cornerRadius: Math.max(6, roleSizes.padding * 0.8),
+                        titleFont: { size: roleSizes.tooltipTitle, weight: '600' },
+                        bodyFont: { size: roleSizes.tooltipBody, weight: '500' },
                         callbacks: {
                             label: function(context) {
                                 return `${context.label}: ${context.raw}`;
@@ -1052,6 +1187,7 @@ canvas {
     // ==================== ACTIVITY TRENDS CHART ====================
     const activityCtx = document.getElementById('activityChart')?.getContext('2d');
     if(activityCtx) {
+        const activitySizes = getResponsiveChartFonts();
         activityChart = new Chart(activityCtx, {
             type: 'line',
             data: {
@@ -1061,14 +1197,14 @@ canvas {
                     data: [45, 52, 48, 61, 73, 55, 42],
                     borderColor: '#7b1fa2',
                     backgroundColor: 'rgba(123, 31, 162, 0.04)',
-                    borderWidth: 3,
+                    borderWidth: Math.max(1.5, activitySizes.barRadius * 0.2),
                     tension: 0.3,
                     fill: true,
                     pointBackgroundColor: '#7b1fa2',
                     pointBorderColor: '#FFFFFF',
-                    pointBorderWidth: 2,
-                    pointRadius: 6,
-                    pointHoverRadius: 10,
+                    pointBorderWidth: Math.max(1, activitySizes.barRadius * 0.15),
+                    pointRadius: Math.max(2, activitySizes.pointRadius),
+                    pointHoverRadius: Math.max(4, activitySizes.pointRadius * 1.5),
                     pointHoverBackgroundColor: '#9c27b0'
                 }]
             },
@@ -1078,16 +1214,16 @@ canvas {
                 plugins: {
                     legend: {
                         labels: {
-                            font: { size: 14, weight: '600' },
+                            font: { size: activitySizes.legend, weight: '600' },
                             color: '#2c2c3e'
                         }
                     },
                     tooltip: {
                         backgroundColor: '#4a148c',
-                        padding: 12,
-                        cornerRadius: 12,
-                        titleFont: { size: 14, weight: '600' },
-                        bodyFont: { size: 13, weight: '500' }
+                        padding: Math.max(6, activitySizes.padding),
+                        cornerRadius: Math.max(6, activitySizes.padding * 0.8),
+                        titleFont: { size: activitySizes.tooltipTitle, weight: '600' },
+                        bodyFont: { size: activitySizes.tooltipBody, weight: '500' }
                     }
                 },
                 scales: {
@@ -1095,27 +1231,29 @@ canvas {
                         grid: { color: '#d1c4e9', lineWidth: 1 },
                         ticks: {
                             color: '#2c2c3e',
-                            font: { size: 13, weight: '600' },
-                            stepSize: 20
+                            font: { size: activitySizes.tick, weight: '600' },
+                            stepSize: 20,
+                            maxTicksLimit: window.innerWidth < 576 ? 4 : 8
                         },
                         title: {
-                            display: true,
+                            display: window.innerWidth > 400,
                             text: 'Actions Count',
                             color: '#6c6c80',
-                            font: { size: 14, weight: '600' }
+                            font: { size: activitySizes.axisTitle, weight: '600' }
                         }
                     },
                     x: {
                         ticks: {
                             color: '#2c2c3e',
-                            font: { size: 13, weight: '600' }
+                            font: { size: activitySizes.tick, weight: '600' },
+                            maxTicksLimit: window.innerWidth < 576 ? 5 : 12
                         },
                         grid: { display: false },
                         title: {
-                            display: true,
+                            display: window.innerWidth > 400,
                             text: 'Day',
                             color: '#6c6c80',
-                            font: { size: 14, weight: '600' }
+                            font: { size: activitySizes.axisTitle, weight: '600' }
                         }
                     }
                 }
@@ -1143,6 +1281,7 @@ canvas {
         if (allZero) {
             document.getElementById('noPaymentsOverlay')?.classList.remove('d-none');
         }
+        const paymentsSizes = getResponsiveChartFonts();
         paymentsBarChart = new Chart(paymentsCtx, {
             type: 'bar',
             data: {
@@ -1152,10 +1291,10 @@ canvas {
                     data: amounts,
                     backgroundColor: 'rgba(123, 31, 162, 0.85)',
                     borderColor: '#7b1fa2',
-                    borderWidth: 2,
-                    borderRadius: 10,
-                    barPercentage: 0.65,
-                    categoryPercentage: 0.8,
+                    borderWidth: Math.max(1, paymentsSizes.barRadius * 0.2),
+                    borderRadius: Math.max(3, paymentsSizes.barRadius),
+                    barPercentage: window.innerWidth < 576 ? 0.5 : 0.65,
+                    categoryPercentage: window.innerWidth < 576 ? 0.7 : 0.8,
                     hoverBackgroundColor: '#4a148c'
                 }]
             },
@@ -1170,15 +1309,15 @@ canvas {
                             }
                         },
                         backgroundColor: '#4a148c',
-                        padding: 12,
-                        cornerRadius: 12,
-                        titleFont: { size: 14, weight: '600' },
-                        bodyFont: { size: 13, weight: '500' }
+                        padding: Math.max(6, paymentsSizes.padding),
+                        cornerRadius: Math.max(6, paymentsSizes.padding * 0.8),
+                        titleFont: { size: paymentsSizes.tooltipTitle, weight: '600' },
+                        bodyFont: { size: paymentsSizes.tooltipBody, weight: '500' }
                     },
                     legend: {
-                        position: 'top',
+                        position: window.innerWidth < 576 ? 'bottom' : 'top',
                         labels: {
-                            font: { size: 14, weight: '600' },
+                            font: { size: paymentsSizes.legend, weight: '600' },
                             color: '#2c2c3e',
                             usePointStyle: true
                         }
@@ -1188,29 +1327,39 @@ canvas {
                     y: {
                         beginAtZero: true,
                         ticks: {
-                            callback: function(value) { return '₱' + value.toLocaleString(); },
+                            callback: function(value) {
+                                if (value >= 1000000) {
+                                    return '₱' + (value / 1000000).toFixed(1) + 'M';
+                                } else if (value >= 1000) {
+                                    return '₱' + (value / 1000).toFixed(1) + 'k';
+                                }
+                                return '₱' + value.toLocaleString();
+                            },
                             color: '#2c2c3e',
-                            font: { size: 13, weight: '600' }
+                            font: { size: paymentsSizes.tick, weight: '600' },
+                            maxTicksLimit: window.innerWidth < 576 ? 5 : 8
                         },
                         grid: { color: '#d1c4e9' },
                         title: {
-                            display: true,
+                            display: window.innerWidth > 400,
                             text: 'Amount (₱)',
                             color: '#6c6c80',
-                            font: { size: 14, weight: '600' }
+                            font: { size: paymentsSizes.axisTitle, weight: '600' }
                         }
                     },
                     x: {
                         ticks: {
                             color: '#2c2c3e',
-                            font: { size: 13, weight: '600' }
+                            font: { size: paymentsSizes.tick, weight: '600' },
+                            maxTicksLimit: window.innerWidth < 576 ? 5 : 12,
+                            maxRotation: window.innerWidth < 576 ? 45 : 30
                         },
                         grid: { display: false },
                         title: {
-                            display: true,
+                            display: window.innerWidth > 400,
                             text: 'Date',
                             color: '#6c6c80',
-                            font: { size: 14, weight: '600' }
+                            font: { size: paymentsSizes.axisTitle, weight: '600' }
                         }
                     }
                 }
@@ -1238,6 +1387,8 @@ canvas {
     @endphp
     const topUsersCtx = document.getElementById('topUsersChart')?.getContext('2d');
     if(topUsersCtx) {
+        const usersSizes = getResponsiveChartFonts();
+        const isMobile = window.innerWidth < 576;
         topUsersChart = new Chart(topUsersCtx, {
             type: 'bar',
             data: {
@@ -1247,32 +1398,32 @@ canvas {
                     data: @json($userBookingCounts),
                     backgroundColor: 'rgba(123, 31, 162, 0.85)',
                     borderColor: '#7b1fa2',
-                    borderWidth: 2,
-                    borderRadius: 10,
-                    barPercentage: 0.6,
-                    categoryPercentage: 0.7,
+                    borderWidth: Math.max(1, usersSizes.barRadius * 0.2),
+                    borderRadius: Math.max(3, usersSizes.barRadius),
+                    barPercentage: isMobile ? 0.5 : 0.6,
+                    categoryPercentage: isMobile ? 0.7 : 0.7,
                     hoverBackgroundColor: '#4a148c'
                 }]
             },
             options: {
                 responsive: true,
                 maintainAspectRatio: true,
-                indexAxis: 'y',
+                indexAxis: isMobile ? 'x' : 'y',
                 plugins: {
                     tooltip: {
                         callbacks: {
                             label: function(context) { return 'Bookings: ' + context.raw; }
                         },
                         backgroundColor: '#4a148c',
-                        padding: 12,
-                        cornerRadius: 12,
-                        titleFont: { size: 14, weight: '600' },
-                        bodyFont: { size: 13, weight: '500' }
+                        padding: Math.max(6, usersSizes.padding),
+                        cornerRadius: Math.max(6, usersSizes.padding * 0.8),
+                        titleFont: { size: usersSizes.tooltipTitle, weight: '600' },
+                        bodyFont: { size: usersSizes.tooltipBody, weight: '500' }
                     },
                     legend: {
-                        position: 'top',
+                        position: isMobile ? 'bottom' : 'top',
                         labels: {
-                            font: { size: 14, weight: '600' },
+                            font: { size: usersSizes.legend, weight: '600' },
                             color: '#2c2c3e',
                             usePointStyle: true
                         }
@@ -1282,28 +1433,30 @@ canvas {
                     x: {
                         ticks: {
                             color: '#2c2c3e',
-                            font: { size: 13, weight: '600' },
-                            stepSize: 1
+                            font: { size: usersSizes.tick, weight: '600' },
+                            stepSize: 1,
+                            maxTicksLimit: isMobile ? 5 : 8
                         },
                         grid: { color: '#d1c4e9' },
                         title: {
-                            display: true,
+                            display: window.innerWidth > 400 && !isMobile,
                             text: 'Number of Bookings',
                             color: '#6c6c80',
-                            font: { size: 14, weight: '600' }
+                            font: { size: usersSizes.axisTitle, weight: '600' }
                         }
                     },
                     y: {
                         ticks: {
                             color: '#2c2c3e',
-                            font: { size: 13, weight: '600' }
+                            font: { size: usersSizes.tick, weight: '600' },
+                            maxTicksLimit: isMobile ? 4 : 8
                         },
                         grid: { display: false },
                         title: {
-                            display: true,
-                            text: 'User',
+                            display: window.innerWidth > 400,
+                            text: isMobile ? 'Bookings' : 'User',
                             color: '#6c6c80',
-                            font: { size: 14, weight: '600' }
+                            font: { size: usersSizes.axisTitle, weight: '600' }
                         }
                     }
                 }
@@ -1318,22 +1471,35 @@ canvas {
         return new Chart(ctx, chartConfig);
     }
 
+    function getModalFontSizes() {
+        const width = window.innerWidth;
+        if (width < 576) {
+            return { title: 12, legend: 12, tick: 10, tooltipTitle: 12, tooltipBody: 10, axisTitle: 12 };
+        } else if (width < 768) {
+            return { title: 14, legend: 14, tick: 12, tooltipTitle: 14, tooltipBody: 12, axisTitle: 14 };
+        } else {
+            return { title: 18, legend: 18, tick: 16, tooltipTitle: 18, tooltipBody: 16, axisTitle: 18 };
+        }
+    }
+
     // Maximize handlers
     document.querySelectorAll('.maximize-chart-btn').forEach(btn => {
         btn.addEventListener('click', function(e) {
             const chartType = this.getAttribute('data-chart');
+            const modalSizes = getModalFontSizes();
+
             if(chartType === 'activity') {
                 const data = activityChart.data;
                 const options = {
                     responsive: true,
                     maintainAspectRatio: true,
                     plugins: {
-                        legend: { labels: { font: { size: 18, weight: '600' }, color: '#2c2c3e' } },
-                        tooltip: { titleFont: { size: 18, weight: '600' }, bodyFont: { size: 16, weight: '500' }, backgroundColor: '#4a148c' }
+                        legend: { labels: { font: { size: modalSizes.legend, weight: '600' }, color: '#2c2c3e' } },
+                        tooltip: { titleFont: { size: modalSizes.tooltipTitle, weight: '600' }, bodyFont: { size: modalSizes.tooltipBody, weight: '500' }, backgroundColor: '#4a148c' }
                     },
                     scales: {
-                        y: { ticks: { font: { size: 16, weight: '600' } }, title: { font: { size: 18, weight: '600' } }, grid: { color: '#d1c4e9' } },
-                        x: { ticks: { font: { size: 16, weight: '600' } }, title: { font: { size: 18, weight: '600' } } }
+                        y: { ticks: { font: { size: modalSizes.tick, weight: '600' } }, title: { font: { size: modalSizes.axisTitle, weight: '600' } }, grid: { color: '#d1c4e9' } },
+                        x: { ticks: { font: { size: modalSizes.tick, weight: '600' } }, title: { font: { size: modalSizes.axisTitle, weight: '600' } } }
                     }
                 };
                 if(modalActivityChart) modalActivityChart.destroy();
@@ -1345,10 +1511,10 @@ canvas {
                 const options = {
                     responsive: true,
                     maintainAspectRatio: true,
-                    cutout: '60%',
+                    cutout: window.innerWidth < 576 ? '50%' : '60%',
                     plugins: {
-                        legend: { labels: { font: { size: 18, weight: '600' }, usePointStyle: true, color: '#2c2c3e' } },
-                        tooltip: { titleFont: { size: 18, weight: '600' }, bodyFont: { size: 16, weight: '500' }, backgroundColor: '#4a148c' }
+                        legend: { labels: { font: { size: modalSizes.legend, weight: '600' }, usePointStyle: true, color: '#2c2c3e' } },
+                        tooltip: { titleFont: { size: modalSizes.tooltipTitle, weight: '600' }, bodyFont: { size: modalSizes.tooltipBody, weight: '500' }, backgroundColor: '#4a148c' }
                     }
                 };
                 if(modalRoleChart) modalRoleChart.destroy();
@@ -1363,15 +1529,15 @@ canvas {
                     plugins: {
                         tooltip: {
                             callbacks: { label: (ctx) => '₱' + ctx.raw.toLocaleString() },
-                            titleFont: { size: 18, weight: '600' },
-                            bodyFont: { size: 16, weight: '500' },
+                            titleFont: { size: modalSizes.tooltipTitle, weight: '600' },
+                            bodyFont: { size: modalSizes.tooltipBody, weight: '500' },
                             backgroundColor: '#4a148c'
                         },
-                        legend: { labels: { font: { size: 18, weight: '600' }, color: '#2c2c3e' } }
+                        legend: { labels: { font: { size: modalSizes.legend, weight: '600' }, color: '#2c2c3e' } }
                     },
                     scales: {
-                        y: { ticks: { font: { size: 16, weight: '600' }, callback: (val) => '₱' + val.toLocaleString() }, title: { font: { size: 18, weight: '600' } }, grid: { color: '#d1c4e9' } },
-                        x: { ticks: { font: { size: 16, weight: '600' } }, title: { font: { size: 18, weight: '600' } } }
+                        y: { ticks: { font: { size: modalSizes.tick, weight: '600' }, callback: (val) => '₱' + val.toLocaleString() }, title: { font: { size: modalSizes.axisTitle, weight: '600' } }, grid: { color: '#d1c4e9' } },
+                        x: { ticks: { font: { size: modalSizes.tick, weight: '600' } }, title: { font: { size: modalSizes.axisTitle, weight: '600' } } }
                     }
                 };
                 if(modalPaymentsChart) modalPaymentsChart.destroy();
@@ -1380,17 +1546,18 @@ canvas {
             }
             else if(chartType === 'users') {
                 const data = topUsersChart.data;
+                const isMobile = window.innerWidth < 576;
                 const options = {
                     responsive: true,
                     maintainAspectRatio: true,
-                    indexAxis: 'y',
+                    indexAxis: isMobile ? 'x' : 'y',
                     plugins: {
-                        tooltip: { titleFont: { size: 18, weight: '600' }, bodyFont: { size: 16, weight: '500' }, backgroundColor: '#4a148c' },
-                        legend: { labels: { font: { size: 18, weight: '600' }, color: '#2c2c3e' } }
+                        tooltip: { titleFont: { size: modalSizes.tooltipTitle, weight: '600' }, bodyFont: { size: modalSizes.tooltipBody, weight: '500' }, backgroundColor: '#4a148c' },
+                        legend: { labels: { font: { size: modalSizes.legend, weight: '600' }, color: '#2c2c3e' } }
                     },
                     scales: {
-                        x: { ticks: { font: { size: 16, weight: '600' } }, title: { font: { size: 18, weight: '600' } }, grid: { color: '#d1c4e9' } },
-                        y: { ticks: { font: { size: 16, weight: '600' } }, title: { font: { size: 18, weight: '600' } } }
+                        x: { ticks: { font: { size: modalSizes.tick, weight: '600' } }, title: { font: { size: modalSizes.axisTitle, weight: '600' } }, grid: { color: '#d1c4e9' } },
+                        y: { ticks: { font: { size: modalSizes.tick, weight: '600' } }, title: { font: { size: modalSizes.axisTitle, weight: '600' } } }
                     }
                 };
                 if(modalUsersChart) modalUsersChart.destroy();
@@ -1412,6 +1579,88 @@ canvas {
                 if(modalId === 'usersModal' && modalUsersChart) { modalUsersChart.destroy(); modalUsersChart = null; }
             });
         }
+    });
+
+    // ==================== WINDOW RESIZE HANDLER ====================
+    let resizeTimeout;
+    window.addEventListener('resize', function() {
+        clearTimeout(resizeTimeout);
+        resizeTimeout = setTimeout(() => {
+            const newSizes = getResponsiveChartFonts();
+
+            // Update global defaults
+            Chart.defaults.font.size = newSizes.title;
+
+            // Update each chart if it exists
+            if (roleChart) {
+                roleChart.options.cutout = newSizes.doughnutCutout;
+                roleChart.options.plugins.legend.labels.font.size = newSizes.legend;
+                roleChart.options.plugins.tooltip.titleFont.size = newSizes.tooltipTitle;
+                roleChart.options.plugins.tooltip.bodyFont.size = newSizes.tooltipBody;
+                roleChart.options.plugins.tooltip.padding = Math.max(6, newSizes.padding);
+                roleChart.options.plugins.tooltip.cornerRadius = Math.max(6, newSizes.padding * 0.8);
+                roleChart.data.datasets[0].borderRadius = Math.max(4, newSizes.barRadius * 0.6);
+                roleChart.data.datasets[0].spacing = Math.max(3, newSizes.barRadius * 0.4);
+                roleChart.update('none');
+            }
+
+            if (activityChart) {
+                activityChart.options.plugins.legend.labels.font.size = newSizes.legend;
+                activityChart.options.plugins.tooltip.titleFont.size = newSizes.tooltipTitle;
+                activityChart.options.plugins.tooltip.bodyFont.size = newSizes.tooltipBody;
+                activityChart.options.plugins.tooltip.padding = Math.max(6, newSizes.padding);
+                activityChart.options.plugins.tooltip.cornerRadius = Math.max(6, newSizes.padding * 0.8);
+                activityChart.options.scales.y.ticks.font.size = newSizes.tick;
+                activityChart.options.scales.y.title.font.size = newSizes.axisTitle;
+                activityChart.options.scales.x.ticks.font.size = newSizes.tick;
+                activityChart.options.scales.x.title.font.size = newSizes.axisTitle;
+                activityChart.options.scales.y.ticks.maxTicksLimit = window.innerWidth < 576 ? 4 : 8;
+                activityChart.options.scales.x.ticks.maxTicksLimit = window.innerWidth < 576 ? 5 : 12;
+                activityChart.data.datasets[0].pointRadius = Math.max(2, newSizes.pointRadius);
+                activityChart.data.datasets[0].pointHoverRadius = Math.max(4, newSizes.pointRadius * 1.5);
+                activityChart.update('none');
+            }
+
+            if (paymentsBarChart) {
+                const isMobile = window.innerWidth < 576;
+                paymentsBarChart.options.plugins.legend.labels.font.size = newSizes.legend;
+                paymentsBarChart.options.plugins.tooltip.titleFont.size = newSizes.tooltipTitle;
+                paymentsBarChart.options.plugins.tooltip.bodyFont.size = newSizes.tooltipBody;
+                paymentsBarChart.options.plugins.tooltip.padding = Math.max(6, newSizes.padding);
+                paymentsBarChart.options.plugins.tooltip.cornerRadius = Math.max(6, newSizes.padding * 0.8);
+                paymentsBarChart.options.scales.y.ticks.font.size = newSizes.tick;
+                paymentsBarChart.options.scales.y.title.font.size = newSizes.axisTitle;
+                paymentsBarChart.options.scales.x.ticks.font.size = newSizes.tick;
+                paymentsBarChart.options.scales.x.title.font.size = newSizes.axisTitle;
+                paymentsBarChart.options.scales.y.ticks.maxTicksLimit = isMobile ? 5 : 8;
+                paymentsBarChart.options.scales.x.ticks.maxTicksLimit = isMobile ? 5 : 12;
+                paymentsBarChart.options.scales.x.ticks.maxRotation = isMobile ? 45 : 30;
+                paymentsBarChart.data.datasets[0].barPercentage = isMobile ? 0.5 : 0.65;
+                paymentsBarChart.data.datasets[0].categoryPercentage = isMobile ? 0.7 : 0.8;
+                paymentsBarChart.data.datasets[0].borderRadius = Math.max(3, newSizes.barRadius);
+                paymentsBarChart.update('none');
+            }
+
+            if (topUsersChart) {
+                const isMobile = window.innerWidth < 576;
+                topUsersChart.options.indexAxis = isMobile ? 'x' : 'y';
+                topUsersChart.options.plugins.legend.labels.font.size = newSizes.legend;
+                topUsersChart.options.plugins.tooltip.titleFont.size = newSizes.tooltipTitle;
+                topUsersChart.options.plugins.tooltip.bodyFont.size = newSizes.tooltipBody;
+                topUsersChart.options.plugins.tooltip.padding = Math.max(6, newSizes.padding);
+                topUsersChart.options.plugins.tooltip.cornerRadius = Math.max(6, newSizes.padding * 0.8);
+                topUsersChart.options.scales.x.ticks.font.size = newSizes.tick;
+                topUsersChart.options.scales.x.title.font.size = newSizes.axisTitle;
+                topUsersChart.options.scales.y.ticks.font.size = newSizes.tick;
+                topUsersChart.options.scales.y.title.font.size = newSizes.axisTitle;
+                topUsersChart.options.scales.x.ticks.maxTicksLimit = isMobile ? 5 : 8;
+                topUsersChart.options.scales.y.ticks.maxTicksLimit = isMobile ? 4 : 8;
+                topUsersChart.data.datasets[0].barPercentage = isMobile ? 0.5 : 0.6;
+                topUsersChart.data.datasets[0].categoryPercentage = isMobile ? 0.7 : 0.7;
+                topUsersChart.data.datasets[0].borderRadius = Math.max(3, newSizes.barRadius);
+                topUsersChart.update('none');
+            }
+        }, 300);
     });
 
     // ================================================================

@@ -1058,7 +1058,7 @@ canvas#feeHistoryChart {
             });
         }
 
-        // --- Chart data from backend ---
+                // --- Chart data from backend ---
         let historyData = @json($feeHistory ?? []);
         let chartLabels = [];
         let chartAmounts = [];
@@ -1076,109 +1076,313 @@ canvas#feeHistoryChart {
             chartAmounts = [parseFloat(@json($fee->amount_per_tray ?? 0))];
         }
 
-        // --- Base chart options with large, clear fonts (1.5rem equivalent) ---
-        const baseChartOptions = {
-            responsive: true,
-            maintainAspectRatio: true,
-            plugins: {
-                tooltip: {
-                    backgroundColor: '#1f2d3d',
-                    titleColor: '#ffffff',
-                    bodyColor: '#eef2f0',
-                    borderColor: '#28a745',
-                    borderWidth: 2,
-                    titleFont: { size: 20, weight: 'bold', family: "'Inter', 'Segoe UI', sans-serif" },
-                    bodyFont: { size: 18, family: "'Inter', 'Segoe UI', sans-serif" },
-                    callbacks: {
-                        label: function(context) {
-                            return `₱ ${context.parsed.y.toFixed(2)} per tray`;
+        // ==================== RESPONSIVE FONT HELPER ====================
+        function getFeeChartFontSizes() {
+            const width = window.innerWidth;
+
+            let sizes = {
+                tooltipTitle: 20,
+                tooltipBody: 18,
+                legend: 24,
+                yTitle: 24,
+                yTick: 20,
+                xTitle: 24,
+                xTick: 18,
+                pointRadius: 7,
+                pointHoverRadius: 11,
+                borderWidth: 4,
+                stepSize: 10,
+                padding: 20
+            };
+
+            // Tablet (769px - 1024px)
+            if (width >= 769 && width <= 1024) {
+                sizes.tooltipTitle = 16;
+                sizes.tooltipBody = 14;
+                sizes.legend = 18;
+                sizes.yTitle = 18;
+                sizes.yTick = 15;
+                sizes.xTitle = 18;
+                sizes.xTick = 14;
+                sizes.pointRadius = 6;
+                sizes.pointHoverRadius = 9;
+                sizes.borderWidth = 3;
+                sizes.stepSize = 10;
+                sizes.padding = 15;
+            }
+            // Mobile (≤ 768px)
+            else if (width <= 768) {
+                sizes.tooltipTitle = 12;
+                sizes.tooltipBody = 11;
+                sizes.legend = 13;
+                sizes.yTitle = 13;
+                sizes.yTick = 11;
+                sizes.xTitle = 13;
+                sizes.xTick = 10;
+                sizes.pointRadius = 5;
+                sizes.pointHoverRadius = 7;
+                sizes.borderWidth = 2.5;
+                sizes.stepSize = 10;
+                sizes.padding = 12;
+            }
+            // Small phones (≤ 576px)
+            else if (width <= 576) {
+                sizes.tooltipTitle = 10;
+                sizes.tooltipBody = 9;
+                sizes.legend = 11;
+                sizes.yTitle = 11;
+                sizes.yTick = 9;
+                sizes.xTitle = 11;
+                sizes.xTick = 8;
+                sizes.pointRadius = 4;
+                sizes.pointHoverRadius = 6;
+                sizes.borderWidth = 2;
+                sizes.stepSize = 10;
+                sizes.padding = 8;
+            }
+            // Very small phones (≤ 400px)
+            else if (width <= 400) {
+                sizes.tooltipTitle = 8;
+                sizes.tooltipBody = 7;
+                sizes.legend = 9;
+                sizes.yTitle = 9;
+                sizes.yTick = 7;
+                sizes.xTitle = 9;
+                sizes.xTick = 7;
+                sizes.pointRadius = 3;
+                sizes.pointHoverRadius = 5;
+                sizes.borderWidth = 1.5;
+                sizes.stepSize = 10;
+                sizes.padding = 6;
+            }
+            // Extra small (≤ 350px)
+            else if (width <= 350) {
+                sizes.tooltipTitle = 7;
+                sizes.tooltipBody = 6;
+                sizes.legend = 8;
+                sizes.yTitle = 8;
+                sizes.yTick = 6;
+                sizes.xTitle = 8;
+                sizes.xTick = 6;
+                sizes.pointRadius = 2.5;
+                sizes.pointHoverRadius = 4;
+                sizes.borderWidth = 1.5;
+                sizes.stepSize = 10;
+                sizes.padding = 4;
+            }
+
+            return sizes;
+        }
+
+        // ==================== BUILD RESPONSIVE CHART OPTIONS ====================
+        function getFeeChartOptions() {
+            const sizes = getFeeChartFontSizes();
+            const isMobile = window.innerWidth < 576;
+            const isVerySmall = window.innerWidth < 400;
+
+            return {
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: {
+                    tooltip: {
+                        backgroundColor: '#1f2d3d',
+                        titleColor: '#ffffff',
+                        bodyColor: '#eef2f0',
+                        borderColor: '#28a745',
+                        borderWidth: Math.max(1, sizes.borderWidth * 0.5),
+                        titleFont: {
+                            size: sizes.tooltipTitle,
+                            weight: 'bold',
+                            family: "'Inter', 'Segoe UI', sans-serif"
+                        },
+                        bodyFont: {
+                            size: sizes.tooltipBody,
+                            family: "'Inter', 'Segoe UI', sans-serif"
+                        },
+                        padding: Math.max(6, sizes.padding * 0.6),
+                        cornerRadius: Math.max(6, sizes.padding * 0.5),
+                        callbacks: {
+                            label: function(context) {
+                                return `₱ ${context.parsed.y.toFixed(2)} per tray`;
+                            }
                         }
+                    },
+                    legend: {
+                        labels: {
+                            font: {
+                                size: sizes.legend,
+                                weight: 'bold',
+                                family: "'Inter', 'Segoe UI', sans-serif"
+                            },
+                            color: '#1f2d3d',
+                            usePointStyle: true,
+                            boxWidth: Math.max(10, sizes.legend * 0.7),
+                            padding: Math.max(8, sizes.padding * 0.8)
+                        },
+                        position: isMobile ? 'bottom' : 'top'
                     }
                 },
-                legend: {
-                    labels: {
-                        font: { size: 24, weight: 'bold', family: "'Inter', 'Segoe UI', sans-serif" },
-                        color: '#1f2d3d',
-                        usePointStyle: true,
-                        boxWidth: 16,
-                        padding: 20
-                    },
-                    position: 'top'
-                }
-            },
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    title: {
-                        display: true,
-                        text: 'Amount (PHP)',
-                        font: { size: 24, weight: 'bold', family: "'Inter', 'Segoe UI', sans-serif" },
-                        color: '#dc3545'
-                    },
-                    ticks: {
-                        callback: function(value) {
-                            return '₱' + value.toFixed(2);
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: window.innerWidth > 400,
+                            text: 'Amount (PHP)',
+                            font: {
+                                size: sizes.yTitle,
+                                weight: 'bold',
+                                family: "'Inter', 'Segoe UI', sans-serif"
+                            },
+                            color: '#dc3545',
+                            padding: { bottom: Math.max(4, sizes.yTitle * 0.3) }
                         },
-                        font: { size: 20, weight: 'bold', family: "'Inter', 'Segoe UI', sans-serif" },
-                        stepSize: 10
+                        ticks: {
+                            callback: function(value) {
+                                if (value >= 1000) {
+                                    return '₱' + (value / 1000).toFixed(1) + 'k';
+                                }
+                                return '₱' + value.toFixed(2);
+                            },
+                            font: {
+                                size: sizes.yTick,
+                                weight: 'bold',
+                                family: "'Inter', 'Segoe UI', sans-serif"
+                            },
+                            stepSize: sizes.stepSize,
+                            maxTicksLimit: isVerySmall ? 4 : (isMobile ? 5 : 8)
+                        },
+                        grid: { color: '#e9ecef', lineWidth: Math.max(0.5, sizes.borderWidth * 0.4) }
                     },
-                    grid: { color: '#e9ecef', lineWidth: 1.5 }
+                    x: {
+                        title: {
+                            display: window.innerWidth > 400,
+                            text: 'Date',
+                            font: {
+                                size: sizes.xTitle,
+                                weight: 'bold',
+                                family: "'Inter', 'Segoe UI', sans-serif"
+                            },
+                            color: '#28a745',
+                            padding: { top: Math.max(4, sizes.xTitle * 0.3) }
+                        },
+                        ticks: {
+                            font: {
+                                size: sizes.xTick,
+                                weight: 'bold',
+                                family: "'Inter', 'Segoe UI', sans-serif"
+                            },
+                            maxRotation: isVerySmall ? 60 : (isMobile ? 45 : 35),
+                            minRotation: isVerySmall ? 45 : (isMobile ? 30 : 25),
+                            autoSkip: true,
+                            autoSkipPadding: isVerySmall ? 5 : (isMobile ? 8 : 15),
+                            maxTicksLimit: isVerySmall ? 4 : (isMobile ? 6 : 12)
+                        },
+                        grid: { display: false }
+                    }
                 },
-                x: {
-                    title: {
-                        display: true,
-                        text: 'Date',
-                        font: { size: 24, weight: 'bold', family: "'Inter', 'Segoe UI', sans-serif" },
-                        color: '#28a745'
+                interaction: {
+                    mode: 'index',
+                    intersect: false
+                },
+                elements: {
+                    line: {
+                        borderJoin: 'round',
+                        borderWidth: Math.max(1.5, sizes.borderWidth)
                     },
-                    ticks: {
-                        font: { size: 18, weight: 'bold', family: "'Inter', 'Segoe UI', sans-serif" },
-                        maxRotation: 45,
-                        minRotation: 35,
-                        autoSkip: true,
-                        autoSkipPadding: 15
-                    },
-                    grid: { display: false }
+                    point: {
+                        radius: sizes.pointRadius,
+                        hoverRadius: sizes.pointHoverRadius,
+                        borderWidth: Math.max(1, sizes.borderWidth * 0.5)
+                    }
                 }
-            },
-            interaction: {
-                mode: 'index',
-                intersect: false
-            },
-            elements: {
-                line: { borderJoin: 'round', borderWidth: 4 },
-                point: { radius: 7, hoverRadius: 11, borderWidth: 3 }
-            }
-        };
+            };
+        }
 
-        const chartDataset = {
-            label: 'Shipping Fee (PHP per tray)',
-            data: chartAmounts,
-            borderColor: '#dc3545',
-            backgroundColor: 'rgba(220, 53, 69, 0.05)',
-            borderWidth: 4,
-            pointRadius: 7,
-            pointHoverRadius: 11,
-            pointBackgroundColor: '#28a745',
-            pointBorderColor: '#ffffff',
-            pointBorderWidth: 2,
-            tension: 0.2,
-            fill: true,
-            pointStyle: 'circle'
-        };
+        // ==================== GET RESPONSIVE DATASET ====================
+        function getResponsiveDataset() {
+            const sizes = getFeeChartFontSizes();
+            return {
+                label: 'Shipping Fee (PHP per tray)',
+                data: chartAmounts,
+                borderColor: '#dc3545',
+                backgroundColor: 'rgba(220, 53, 69, 0.05)',
+                borderWidth: Math.max(1.5, sizes.borderWidth),
+                pointRadius: sizes.pointRadius,
+                pointHoverRadius: sizes.pointHoverRadius,
+                pointBackgroundColor: '#28a745',
+                pointBorderColor: '#ffffff',
+                pointBorderWidth: Math.max(1, sizes.borderWidth * 0.5),
+                tension: 0.2,
+                fill: true,
+                pointStyle: 'circle'
+            };
+        }
 
-        // --- Initialize main chart ---
+        // ==================== INITIALIZE MAIN CHART ====================
         const ctx = document.getElementById('feeHistoryChart').getContext('2d');
         let feeChart = new Chart(ctx, {
             type: 'line',
             data: {
                 labels: chartLabels,
-                datasets: [chartDataset]
+                datasets: [getResponsiveDataset()]
             },
-            options: baseChartOptions
+            options: getFeeChartOptions()
         });
 
-        // --- Maximize Chart Modal Logic ---
+        // ==================== WINDOW RESIZE HANDLER ====================
+        let feeResizeTimeout;
+        window.addEventListener('resize', function() {
+            clearTimeout(feeResizeTimeout);
+            feeResizeTimeout = setTimeout(() => {
+                if (feeChart) {
+                    const newSizes = getFeeChartFontSizes();
+                    const isMobile = window.innerWidth < 576;
+                    const isVerySmall = window.innerWidth < 400;
+
+                    // Update dataset
+                    feeChart.data.datasets[0].borderWidth = Math.max(1.5, newSizes.borderWidth);
+                    feeChart.data.datasets[0].pointRadius = newSizes.pointRadius;
+                    feeChart.data.datasets[0].pointHoverRadius = newSizes.pointHoverRadius;
+                    feeChart.data.datasets[0].pointBorderWidth = Math.max(1, newSizes.borderWidth * 0.5);
+
+                    // Update options
+                    feeChart.options.plugins.tooltip.titleFont.size = newSizes.tooltipTitle;
+                    feeChart.options.plugins.tooltip.bodyFont.size = newSizes.tooltipBody;
+                    feeChart.options.plugins.tooltip.borderWidth = Math.max(1, newSizes.borderWidth * 0.5);
+                    feeChart.options.plugins.tooltip.padding = Math.max(6, newSizes.padding * 0.6);
+                    feeChart.options.plugins.tooltip.cornerRadius = Math.max(6, newSizes.padding * 0.5);
+
+                    feeChart.options.plugins.legend.labels.font.size = newSizes.legend;
+                    feeChart.options.plugins.legend.labels.boxWidth = Math.max(10, newSizes.legend * 0.7);
+                    feeChart.options.plugins.legend.labels.padding = Math.max(8, newSizes.padding * 0.8);
+                    feeChart.options.plugins.legend.position = isMobile ? 'bottom' : 'top';
+
+                    feeChart.options.scales.y.title.font.size = newSizes.yTitle;
+                    feeChart.options.scales.y.title.display = window.innerWidth > 400;
+                    feeChart.options.scales.y.ticks.font.size = newSizes.yTick;
+                    feeChart.options.scales.y.ticks.stepSize = newSizes.stepSize;
+                    feeChart.options.scales.y.ticks.maxTicksLimit = isVerySmall ? 4 : (isMobile ? 5 : 8);
+                    feeChart.options.scales.y.grid.lineWidth = Math.max(0.5, newSizes.borderWidth * 0.4);
+
+                    feeChart.options.scales.x.title.font.size = newSizes.xTitle;
+                    feeChart.options.scales.x.title.display = window.innerWidth > 400;
+                    feeChart.options.scales.x.ticks.font.size = newSizes.xTick;
+                    feeChart.options.scales.x.ticks.maxRotation = isVerySmall ? 60 : (isMobile ? 45 : 35);
+                    feeChart.options.scales.x.ticks.minRotation = isVerySmall ? 45 : (isMobile ? 30 : 25);
+                    feeChart.options.scales.x.ticks.autoSkipPadding = isVerySmall ? 5 : (isMobile ? 8 : 15);
+                    feeChart.options.scales.x.ticks.maxTicksLimit = isVerySmall ? 4 : (isMobile ? 6 : 12);
+
+                    feeChart.options.elements.line.borderWidth = Math.max(1.5, newSizes.borderWidth);
+                    feeChart.options.elements.point.radius = newSizes.pointRadius;
+                    feeChart.options.elements.point.hoverRadius = newSizes.pointHoverRadius;
+                    feeChart.options.elements.point.borderWidth = Math.max(1, newSizes.borderWidth * 0.5);
+
+                    feeChart.update('none');
+                }
+            }, 300);
+        });
+
+        // ==================== MAXIMIZE CHART MODAL LOGIC ====================
         const maximizeBtn = document.getElementById('maximizeChartBtn');
         const modalElement = document.getElementById('chartMaximizeModal');
         let maximizeChart = null;
@@ -1201,27 +1405,213 @@ canvas#feeHistoryChart {
                 }
 
                 const modalCtx = modalCanvas.getContext('2d');
-                // Slightly larger fonts for maximized view (even more clarity)
-                const maximizedOptions = JSON.parse(JSON.stringify(baseChartOptions));
-                maximizedOptions.plugins.legend.labels.font.size = 28;
-                maximizedOptions.plugins.tooltip.titleFont.size = 24;
-                maximizedOptions.plugins.tooltip.bodyFont.size = 22;
-                maximizedOptions.scales.y.title.font.size = 28;
-                maximizedOptions.scales.y.ticks.font.size = 24;
-                maximizedOptions.scales.x.title.font.size = 28;
-                maximizedOptions.scales.x.ticks.font.size = 22;
-                maximizedOptions.elements.point.radius = 10;
-                maximizedOptions.elements.point.hoverRadius = 15;
+
+                // Get modal-specific font sizes (larger for better visibility)
+                function getModalFontSizes() {
+                    const width = window.innerWidth;
+                    if (width < 576) {
+                        return {
+                            tooltipTitle: 14,
+                            tooltipBody: 12,
+                            legend: 16,
+                            yTitle: 16,
+                            yTick: 14,
+                            xTitle: 16,
+                            xTick: 13,
+                            pointRadius: 6,
+                            pointHoverRadius: 9,
+                            borderWidth: 2.5,
+                            stepSize: 10,
+                            padding: 12
+                        };
+                    } else if (width < 768) {
+                        return {
+                            tooltipTitle: 18,
+                            tooltipBody: 16,
+                            legend: 20,
+                            yTitle: 20,
+                            yTick: 17,
+                            xTitle: 20,
+                            xTick: 16,
+                            pointRadius: 8,
+                            pointHoverRadius: 12,
+                            borderWidth: 3,
+                            stepSize: 10,
+                            padding: 16
+                        };
+                    } else {
+                        return {
+                            tooltipTitle: 24,
+                            tooltipBody: 22,
+                            legend: 28,
+                            yTitle: 28,
+                            yTick: 24,
+                            xTitle: 28,
+                            xTick: 22,
+                            pointRadius: 10,
+                            pointHoverRadius: 15,
+                            borderWidth: 4,
+                            stepSize: 10,
+                            padding: 20
+                        };
+                    }
+                }
+
+                const modalSizes = getModalFontSizes();
+                const isMobile = window.innerWidth < 576;
+
+                // Create maximized chart options with larger fonts
+                const maximizedOptions = {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        tooltip: {
+                            backgroundColor: '#1f2d3d',
+                            titleColor: '#ffffff',
+                            bodyColor: '#eef2f0',
+                            borderColor: '#28a745',
+                            borderWidth: Math.max(1, modalSizes.borderWidth * 0.5),
+                            titleFont: {
+                                size: modalSizes.tooltipTitle,
+                                weight: 'bold',
+                                family: "'Inter', 'Segoe UI', sans-serif"
+                            },
+                            bodyFont: {
+                                size: modalSizes.tooltipBody,
+                                family: "'Inter', 'Segoe UI', sans-serif"
+                            },
+                            padding: Math.max(8, modalSizes.padding * 0.6),
+                            cornerRadius: Math.max(8, modalSizes.padding * 0.5),
+                            callbacks: {
+                                label: function(context) {
+                                    return `₱ ${context.parsed.y.toFixed(2)} per tray`;
+                                }
+                            }
+                        },
+                        legend: {
+                            labels: {
+                                font: {
+                                    size: modalSizes.legend,
+                                    weight: 'bold',
+                                    family: "'Inter', 'Segoe UI', sans-serif"
+                                },
+                                color: '#1f2d3d',
+                                usePointStyle: true,
+                                boxWidth: Math.max(12, modalSizes.legend * 0.7),
+                                padding: Math.max(10, modalSizes.padding * 0.8)
+                            },
+                            position: isMobile ? 'bottom' : 'top'
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: window.innerWidth > 400,
+                                text: 'Amount (PHP)',
+                                font: {
+                                    size: modalSizes.yTitle,
+                                    weight: 'bold',
+                                    family: "'Inter', 'Segoe UI', sans-serif"
+                                },
+                                color: '#dc3545',
+                                padding: { bottom: Math.max(6, modalSizes.yTitle * 0.3) }
+                            },
+                            ticks: {
+                                callback: function(value) {
+                                    if (value >= 1000) {
+                                        return '₱' + (value / 1000).toFixed(1) + 'k';
+                                    }
+                                    return '₱' + value.toFixed(2);
+                                },
+                                font: {
+                                    size: modalSizes.yTick,
+                                    weight: 'bold',
+                                    family: "'Inter', 'Segoe UI', sans-serif"
+                                },
+                                stepSize: modalSizes.stepSize,
+                                maxTicksLimit: isMobile ? 5 : 8
+                            },
+                            grid: { color: '#e9ecef', lineWidth: Math.max(0.5, modalSizes.borderWidth * 0.4) }
+                        },
+                        x: {
+                            title: {
+                                display: window.innerWidth > 400,
+                                text: 'Date',
+                                font: {
+                                    size: modalSizes.xTitle,
+                                    weight: 'bold',
+                                    family: "'Inter', 'Segoe UI', sans-serif"
+                                },
+                                color: '#28a745',
+                                padding: { top: Math.max(6, modalSizes.xTitle * 0.3) }
+                            },
+                            ticks: {
+                                font: {
+                                    size: modalSizes.xTick,
+                                    weight: 'bold',
+                                    family: "'Inter', 'Segoe UI', sans-serif"
+                                },
+                                maxRotation: isMobile ? 45 : 35,
+                                minRotation: isMobile ? 30 : 25,
+                                autoSkip: true,
+                                autoSkipPadding: isMobile ? 8 : 15,
+                                maxTicksLimit: isMobile ? 6 : 12
+                            },
+                            grid: { display: false }
+                        }
+                    },
+                    interaction: {
+                        mode: 'index',
+                        intersect: false
+                    },
+                    elements: {
+                        line: {
+                            borderJoin: 'round',
+                            borderWidth: Math.max(2, modalSizes.borderWidth)
+                        },
+                        point: {
+                            radius: modalSizes.pointRadius,
+                            hoverRadius: modalSizes.pointHoverRadius,
+                            borderWidth: Math.max(1.5, modalSizes.borderWidth * 0.5)
+                        }
+                    }
+                };
+
+                const modalDataset = {
+                    label: 'Shipping Fee (PHP per tray)',
+                    data: chartAmounts,
+                    borderColor: '#dc3545',
+                    backgroundColor: 'rgba(220, 53, 69, 0.05)',
+                    borderWidth: Math.max(2, modalSizes.borderWidth),
+                    pointRadius: modalSizes.pointRadius,
+                    pointHoverRadius: modalSizes.pointHoverRadius,
+                    pointBackgroundColor: '#28a745',
+                    pointBorderColor: '#ffffff',
+                    pointBorderWidth: Math.max(1.5, modalSizes.borderWidth * 0.5),
+                    tension: 0.2,
+                    fill: true,
+                    pointStyle: 'circle'
+                };
 
                 maximizeChart = new Chart(modalCtx, {
                     type: 'line',
                     data: {
                         labels: chartLabels,
-                        datasets: [chartDataset]
+                        datasets: [modalDataset]
                     },
                     options: maximizedOptions
                 });
             });
+
+            // Destroy modal chart on close
+            modalElement.addEventListener('hidden.bs.modal', function() {
+                if (maximizeChart) {
+                    maximizeChart.destroy();
+                    maximizeChart = null;
+                }
+            });
+
 
             // Clean up when modal is hidden
             modalElement.addEventListener('hidden.bs.modal', function() {
