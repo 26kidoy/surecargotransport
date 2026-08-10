@@ -1,0 +1,221 @@
+# ============================================
+# DISABLE DIRECTORY BROWSING
+# ============================================
+Options -Indexes
+
+# ============================================
+# DISABLE MULTIVIEWS
+# ============================================
+<IfModule mod_negotiation.c>
+    Options -MultiViews -Indexes
+</IfModule>
+
+# ============================================
+# BEGIN REWRITE ENGINE
+# ============================================
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase /
+
+    # ============================================
+    # BLOCK ACCESS TO SENSITIVE FILES
+    # ============================================
+    RewriteRule ^(\.env|\.htaccess|\.htpasswd|composer\.json|composer\.lock|artisan|package\.json|webpack\.mix\.js|server\.php)$ - [F,L,NC]
+
+    # ============================================
+    # BLOCK ACCESS TO APPLICATION DIRECTORIES
+    # ============================================
+    RewriteRule ^(app|bootstrap|config|database|resources|routes|tests|vendor)/ - [F,L,NC]
+
+    # ============================================
+    # PROTECT AGAINST XSS/SQL INJECTION IN QUERY STRING
+    # ============================================
+    RewriteCond %{QUERY_STRING} (\<|%3C|\b(alert|script|onerror|onload|eval|javascript|base64|data:)\b) [NC]
+    RewriteRule .* - [F,L]
+
+    # ============================================
+    # PREVENT DIRECT ACCESS TO INDEX.PHP
+    # ============================================
+    RewriteCond %{THE_REQUEST} \s/+index\.php
+    RewriteRule ^index\.php$ - [R=404,L]
+
+    # ============================================
+    # BLOCK DIRECT ACCESS TO PUBLIC/PUBLIC_HTML
+    # ============================================
+    RewriteCond %{THE_REQUEST} "^[A-Z]{3,}\s/+public(?:/|$|\s|\?)" [NC,OR]
+    RewriteCond %{THE_REQUEST} "^[A-Z]{3,}\s/+public_html(?:/|$|\s|\?)" [NC]
+    RewriteRule ^ - [R=404,L]
+
+    # ============================================
+    # HANDLE AUTHORIZATION HEADER
+    # ============================================
+    RewriteCond %{HTTP:Authorization} .
+    RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+
+    # ============================================
+    # HANDLE X-XSRF-TOKEN HEADER
+    # ============================================
+    RewriteCond %{HTTP:x-xsrf-token} .
+    RewriteRule .* - [E=HTTP_X_XSRF_TOKEN:%{HTTP:X-XSRF-Token}]
+
+    # ============================================
+    # REDIRECT TRAILING SLASHES
+    # ============================================
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_URI} (.+)/$
+    RewriteRule ^ %1 [L,R=301]
+
+    # ============================================
+    # FORCE HTTPS (Skip localhost)
+    # ============================================
+    RewriteCond %{HTTP_HOST} !^localhost [NC]
+    RewriteCond %{HTTP_HOST} !^127\.0\.0\.1 [NC]
+    RewriteCond %{HTTPS} off
+    RewriteCond %{HTTP:X-Forwarded-Proto} !https
+    RewriteRule ^(.*)$ https://%{HTTP_HOST}/$1 [R=301,L]
+
+    # ============================================
+    # SEND REQUESTS TO FRONT CONTROLLER
+    # ============================================
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteRule ^ index.php [L]
+
+</IfModule>
+
+# ============================================
+# SECURITY HEADERS
+# ============================================
+<IfModule mod_headers.c>
+    # ============================================
+    # BASIC SECURITY HEADERS
+    # ============================================
+    Header always set X-Frame-Options "DENY"
+    Header always set X-Content-Type-Options "nosniff"
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+    Header always set X-XSS-Protection "1; mode=block"
+    Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains; preload" env=HTTPS
+
+    # ============================================
+    # CONTENT SECURITY POLICY (CSP)
+    # ============================================
+    Header always set Content-Security-Policy "default-src 'self'; style-src 'self' 'unsafe-inline' https:; script-src 'self' 'unsafe-inline' https://www.google.com https://www.gstatic.com https://www.recaptcha.net https:; img-src 'self' data: https:; font-src 'self' data: https:; frame-src 'self' https://www.google.com https://www.gstatic.com https://www.recaptcha.net; object-src 'none'; base-uri 'self'; frame-ancestors 'none';"
+
+    # ============================================
+    # PERMISSIONS POLICY
+    # ============================================
+    Header always set Permissions-Policy "accelerometer=(), camera=(), geolocation=(self), gyroscope=(), magnetometer=(), microphone=(), payment=(), usb=(), fullscreen=(self)"
+
+    # ============================================
+    # CORS HEADERS (For specific domains)
+    # ============================================
+    # Update this to your actual domain or use * for development
+    # For production, it's better to specify exact domains
+    Header always set Access-Control-Allow-Origin "https://mcc-pes.com"
+    Header always set Access-Control-Allow-Credentials "true"
+    Header always set Access-Control-Allow-Methods "GET, POST, PUT, PATCH, DELETE, OPTIONS"
+    Header always set Access-Control-Allow-Headers "Content-Type, Authorization, X-Requested-With, X-XSRF-TOKEN, X-XSRF-Token, Accept, Origin"
+    Header always set Access-Control-Max-Age "3600"
+
+    # ============================================
+    # HANDLE CORS PREFLIGHT REQUESTS
+    # ============================================
+    RewriteCond %{REQUEST_METHOD} OPTIONS
+    RewriteRule ^ - [R=200,L]
+
+</IfModule>
+
+# ============================================
+# CACHE CONTROL FOR STATIC ASSETS
+# ============================================
+<IfModule mod_expires.c>
+    ExpiresActive On
+    ExpiresByType image/jpg "access plus 1 year"
+    ExpiresByType image/jpeg "access plus 1 year"
+    ExpiresByType image/gif "access plus 1 year"
+    ExpiresByType image/png "access plus 1 year"
+    ExpiresByType image/webp "access plus 1 year"
+    ExpiresByType image/svg+xml "access plus 1 year"
+    ExpiresByType text/css "access plus 1 month"
+    ExpiresByType application/javascript "access plus 1 month"
+    ExpiresByType application/x-javascript "access plus 1 month"
+    ExpiresByType text/javascript "access plus 1 month"
+    ExpiresByType image/x-icon "access plus 1 year"
+    ExpiresByType application/font-woff "access plus 1 year"
+    ExpiresByType application/font-woff2 "access plus 1 year"
+    ExpiresByType application/vnd.ms-fontobject "access plus 1 year"
+    ExpiresByType application/json "access plus 0 seconds"
+</IfModule>
+
+# ============================================
+# GZIP COMPRESSION
+# ============================================
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/html
+    AddOutputFilterByType DEFLATE text/css
+    AddOutputFilterByType DEFLATE text/javascript
+    AddOutputFilterByType DEFLATE application/javascript
+    AddOutputFilterByType DEFLATE application/x-javascript
+    AddOutputFilterByType DEFLATE application/json
+    AddOutputFilterByType DEFLATE application/xml
+    AddOutputFilterByType DEFLATE application/rss+xml
+    AddOutputFilterByType DEFLATE text/xml
+    AddOutputFilterByType DEFLATE text/plain
+    AddOutputFilterByType DEFLATE image/svg+xml
+    AddOutputFilterByType DEFLATE application/x-font-ttf
+    AddOutputFilterByType DEFLATE application/x-font-otf
+    AddOutputFilterByType DEFLATE application/x-font-woff
+    AddOutputFilterByType DEFLATE application/x-font-woff2
+</IfModule>
+
+# ============================================
+# BLOCK BAD BOTS (SQL Injection Scanners)
+# ============================================
+<IfModule mod_setenvif.c>
+    SetEnvIfNoCase User-Agent "sqlmap" bad_bot
+    SetEnvIfNoCase User-Agent "acunetix" bad_bot
+    SetEnvIfNoCase User-Agent "nikto" bad_bot
+    SetEnvIfNoCase User-Agent "curl" bad_bot
+    SetEnvIfNoCase User-Agent "wget" bad_bot
+    SetEnvIfNoCase User-Agent "masscan" bad_bot
+    SetEnvIfNoCase User-Agent "nmap" bad_bot
+</IfModule>
+
+<IfModule mod_authz_core.c>
+    <RequireAll>
+        Require all granted
+        Require not env bad_bot
+    </RequireAll>
+</IfModule>
+
+# ============================================
+# BLOCK ACCESS TO SENSITIVE FILES (Apache FilesMatch)
+# ============================================
+<FilesMatch "(\.env|\.git|\.gitignore|composer\.json|composer\.lock|artisan|server\.php|package\.json|package-lock\.json|webpack\.mix\.js|yarn\.lock)$">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+# ============================================
+# API PROTECTION (Requires Authorization)
+# ============================================
+<IfModule mod_rewrite.c>
+    # Block access to API without authorization header
+    RewriteCond %{REQUEST_URI} ^/api/
+    RewriteCond %{HTTP:Authorization} ^$
+    RewriteCond %{REQUEST_METHOD} !OPTIONS
+    RewriteCond %{REQUEST_URI} !^/api/ping
+    RewriteCond %{REQUEST_URI} !^/api/health
+    RewriteCond %{REQUEST_URI} !^/api/public
+    RewriteRule ^ - [F]
+</IfModule>
+
+# ============================================
+# CUSTOM ERROR PAGES
+# ============================================
+ErrorDocument 400 /index.php?error=400
+ErrorDocument 401 /index.php?error=401
+ErrorDocument 403 /index.php?error=403
+ErrorDocument 404 /index.php?error=404
+ErrorDocument 500 /index.php?error=500
+ErrorDocument 503 /index.php?error=503
