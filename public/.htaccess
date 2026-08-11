@@ -1,248 +1,26 @@
-# ============================================
-# DISABLE DIRECTORY BROWSING
-# ============================================
-Options -Indexes
-
-# ============================================
-# DISABLE MULTIVIEWS
-# ============================================
-<IfModule mod_negotiation.c>
-    Options -MultiViews -Indexes
-</IfModule>
-
-# ============================================
-# BEGIN REWRITE ENGINE
-# ============================================
 <IfModule mod_rewrite.c>
     RewriteEngine On
-    RewriteBase /
 
-    # ============================================
-    # BLOCK ACCESS TO SENSITIVE FILES
-    # ============================================
-    RewriteRule ^(\.env|\.htaccess|\.htpasswd|composer\.json|composer\.lock|artisan|package\.json|webpack\.mix\.js|server\.php)$ - [F,L,NC]
 
-    # ============================================
-    # BLOCK ACCESS TO APPLICATION DIRECTORIES
-    # ============================================
-    RewriteRule ^(app|bootstrap|config|database|resources|routes|tests|vendor)/ - [F,L,NC]
-
-    # ============================================
-    # PROTECT AGAINST XSS/SQL INJECTION IN QUERY STRING
-    # ✅ FIXED: Skip check for app requests
-    # ============================================
-    RewriteCond %{ENV:is_app_request} !=1
-    RewriteCond %{QUERY_STRING} (\<|%3C|\b(alert|script|onerror|onload|eval|javascript|base64|data:)\b) [NC]
+    RewriteCond %{HTTP_USER_AGENT} (curl|culr|xcurl|wget|sqlmap|acunetix|nikto|python-requests|libwww-perl|go-http-client) [NC]
     RewriteRule .* - [F,L]
 
-    # ============================================
-    # PREVENT DIRECT ACCESS TO INDEX.PHP
-    # ============================================
-    RewriteCond %{THE_REQUEST} \s/+index\.php
-    RewriteRule ^index\.php$ - [R=404,L]
 
-    # ============================================
-    # BLOCK DIRECT ACCESS TO PUBLIC/PUBLIC_HTML
-    # ============================================
-    RewriteCond %{THE_REQUEST} "^[A-Z]{3,}\s/+public(?:/|$|\s|\?)" [NC,OR]
-    RewriteCond %{THE_REQUEST} "^[A-Z]{3,}\s/+public_html(?:/|$|\s|\?)" [NC]
-    RewriteRule ^ - [R=404,L]
-
-    # ============================================
-    # HANDLE AUTHORIZATION HEADER
-    # ============================================
-    RewriteCond %{HTTP:Authorization} .
-    RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
-
-    # ============================================
-    # HANDLE X-XSRF-TOKEN HEADER
-    # ============================================
-    RewriteCond %{HTTP:x-xsrf-token} .
-    RewriteRule .* - [E=HTTP_X_XSRF_TOKEN:%{HTTP:X-XSRF-Token}]
-
-    # ============================================
-    # REDIRECT TRAILING SLASHES
-    # ============================================
-    RewriteCond %{REQUEST_FILENAME} !-d
-    RewriteCond %{REQUEST_URI} (.+)/$
-    RewriteRule ^ %1 [L,R=301]
-
-    # ============================================
-    # FORCE HTTPS (Skip localhost)
-    # ============================================
-    RewriteCond %{HTTP_HOST} !^localhost [NC]
-    RewriteCond %{HTTP_HOST} !^127\.0\.0\.1 [NC]
-    RewriteCond %{HTTPS} off
-    RewriteCond %{HTTP:X-Forwarded-Proto} !https
-    RewriteRule ^(.*)$ https://%{HTTP_HOST}/$1 [R=301,L]
-
-    # ============================================
-    # SEND REQUESTS TO FRONT CONTROLLER
-    # ============================================
-    RewriteCond %{REQUEST_FILENAME} !-d
-    RewriteCond %{REQUEST_FILENAME} !-f
-    RewriteRule ^ index.php [L]
-
+    RewriteCond %{REQUEST_URI} !^/public/
+    RewriteRule ^(.*)$ public/$1 [L,QSA]
 </IfModule>
 
-# ============================================
-# SECURITY HEADERS
-# ============================================
-<IfModule mod_headers.c>
-
-    # ============================================
-    # DETECT CORDOVA/APP REQUESTS
-    # ✅ FIXED: Added more comprehensive detection
-    # ============================================
-    SetEnvIf User-Agent "(cordova|ionic|capacitor|android|iphone|ipad|webview|mobile|safari.*mobile)" is_app_request
-    SetEnvIf HTTP_X_FORWARDED_FOR "(cordova|ionic|capacitor)" is_app_request
-    SetEnvIf HTTP_APP_VERSION ".+" is_app_request
-    SetEnvIf HTTP_ORIGIN "^capacitor://" is_app_request
-    SetEnvIf HTTP_ORIGIN "^ionic://" is_app_request
-    SetEnvIf HTTP_ORIGIN "^file://" is_app_request
-
-    # ============================================
-    # BASIC SECURITY HEADERS
-    # ============================================
-    Header always set X-Content-Type-Options "nosniff"
-    Header always set Referrer-Policy "strict-origin-when-cross-origin"
-    Header always set X-XSS-Protection "1; mode=block"
-    Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains; preload" env=HTTPS
-
-    # ============================================
-    # X-FRAME-OPTIONS (Allow Cordova but block others)
-    # ✅ FIXED: Proper allow for app requests
-    # ============================================
-    <If "%{reqenv:is_app_request} == '1'">
-        Header always set X-Frame-Options "ALLOWALL"
-    </If>
-    <Else>
-        Header always set X-Frame-Options "SAMEORIGIN"
-    </Else>
-
-    # ============================================
-    # CONTENT SECURITY POLICY (CSP)
-    # ✅ FIXED: Proper CSP for Cordova apps
-    # ============================================
-    <If "%{reqenv:is_app_request} == '1'">
-        # ✅ Cordova App: Relaxed CSP
-        Header set Content-Security-Policy "default-src 'self' data: gap: https://ssl.gstatic.com https://surecargotransport.com https://*.surecargotransport.com; style-src 'self' 'unsafe-inline' https:; script-src 'self' 'unsafe-inline' https://www.google.com https://www.gstatic.com https://www.recaptcha.net https: 'unsafe-eval'; img-src 'self' data: https: http: file: content: cdvphotolibrary:; font-src 'self' data: https:; frame-src 'self' https://www.google.com https://www.gstatic.com https://www.recaptcha.net; object-src 'none'; base-uri 'self'; frame-ancestors 'self' *; connect-src 'self' https://surecargotransport.com https://*.surecargotransport.com https: wss: ws:;"
-    </If>
-    <Else>
-        # ✅ Regular Browser: Strict CSP
-        Header set Content-Security-Policy "default-src 'self'; style-src 'self' 'unsafe-inline' https:; script-src 'self' 'unsafe-inline' https://www.google.com https://www.gstatic.com https://www.recaptcha.net https:; img-src 'self' data: https:; font-src 'self' data: https:; frame-src 'self' https://www.google.com https://www.gstatic.com https://www.recaptcha.net; object-src 'none'; base-uri 'self'; frame-ancestors 'none';"
-    </Else>
-
-    # ============================================
-    # PERMISSIONS POLICY
-    # ============================================
-    Header always set Permissions-Policy "accelerometer=(), camera=(), geolocation=(self), gyroscope=(), magnetometer=(), microphone=(), payment=(), usb=(), fullscreen=(self)"
-
-    # ============================================
-    # CORS HEADERS (Support multiple origins)
-    # ✅ FIXED: Better CORS handling
-    # ============================================
-    # Allow Cordova app origins
-    SetEnvIf Origin "^https?://(localhost|127\.0\.0\.1|192\.168\.[0-9]+\.[0-9]+|file://|capacitor://|ionic://|http://localhost:[0-9]+)" is_local_origin
-    SetEnvIf Origin "https://surecargotransport\.com" is_allowed_origin
-    SetEnvIf Origin "https://mcc-pes\.com" is_allowed_origin
-    SetEnvIf Origin "capacitor://localhost" is_allowed_origin
-    SetEnvIf Origin "ionic://localhost" is_allowed_origin
-    SetEnvIf Origin "file://" is_allowed_origin
-
-    # Set CORS headers for allowed origins
-    Header always set Access-Control-Allow-Credentials "true"
-    Header always set Access-Control-Allow-Methods "GET, POST, PUT, PATCH, DELETE, OPTIONS"
-    Header always set Access-Control-Allow-Headers "Content-Type, Authorization, X-Requested-With, X-XSRF-TOKEN, X-XSRF-Token, Accept, Origin, Cache-Control"
-    Header always set Access-Control-Max-Age "3600"
-
-    # Set Access-Control-Allow-Origin based on origin
-    <If "%{reqenv:is_allowed_origin} == '1'">
-        Header always set Access-Control-Allow-Origin "%{HTTP_ORIGIN}e"
-    </If>
-    <ElseIf "%{reqenv:is_local_origin} == '1'">
-        Header always set Access-Control-Allow-Origin "%{HTTP_ORIGIN}e"
-    </ElseIf>
-    <ElseIf "%{reqenv:is_app_request} == '1'">
-        # ✅ If it's an app request but no origin, allow all
-        Header always set Access-Control-Allow-Origin "*"
-    </Else>
-    <Else>
-        # Fallback for production
-        Header always set Access-Control-Allow-Origin "https://surecargotransport.com"
-    </Else>
-
-    # ============================================
-    # HANDLE CORS PREFLIGHT REQUESTS
-    # ============================================
-    RewriteCond %{REQUEST_METHOD} OPTIONS
-    RewriteRule ^ - [R=200,L]
-
-</IfModule>
-
-# ============================================
-# CACHE CONTROL FOR STATIC ASSETS
-# ============================================
-<IfModule mod_expires.c>
-    ExpiresActive On
-    ExpiresByType image/jpg "access plus 1 year"
-    ExpiresByType image/jpeg "access plus 1 year"
-    ExpiresByType image/gif "access plus 1 year"
-    ExpiresByType image/png "access plus 1 year"
-    ExpiresByType image/webp "access plus 1 year"
-    ExpiresByType image/svg+xml "access plus 1 year"
-    ExpiresByType text/css "access plus 1 month"
-    ExpiresByType application/javascript "access plus 1 month"
-    ExpiresByType application/x-javascript "access plus 1 month"
-    ExpiresByType text/javascript "access plus 1 month"
-    ExpiresByType image/x-icon "access plus 1 year"
-    ExpiresByType application/font-woff "access plus 1 year"
-    ExpiresByType application/font-woff2 "access plus 1 year"
-    ExpiresByType application/vnd.ms-fontobject "access plus 1 year"
-    ExpiresByType application/json "access plus 0 seconds"
-</IfModule>
-
-# ============================================
-# GZIP COMPRESSION
-# ============================================
-<IfModule mod_deflate.c>
-    AddOutputFilterByType DEFLATE text/html
-    AddOutputFilterByType DEFLATE text/css
-    AddOutputFilterByType DEFLATE text/javascript
-    AddOutputFilterByType DEFLATE application/javascript
-    AddOutputFilterByType DEFLATE application/x-javascript
-    AddOutputFilterByType DEFLATE application/json
-    AddOutputFilterByType DEFLATE application/xml
-    AddOutputFilterByType DEFLATE application/rss+xml
-    AddOutputFilterByType DEFLATE text/xml
-    AddOutputFilterByType DEFLATE text/plain
-    AddOutputFilterByType DEFLATE image/svg+xml
-    AddOutputFilterByType DEFLATE application/x-font-ttf
-    AddOutputFilterByType DEFLATE application/x-font-otf
-    AddOutputFilterByType DEFLATE application/x-font-woff
-    AddOutputFilterByType DEFLATE application/x-font-woff2
-</IfModule>
-
-# ============================================
-# BLOCK BAD BOTS (SQL Injection Scanners)
-# ✅ FIXED: Allow Cordova apps
-# ============================================
 <IfModule mod_setenvif.c>
+    SetEnvIfNoCase User-Agent "curl" bad_bot
+    SetEnvIfNoCase User-Agent "culr" bad_bot
+    SetEnvIfNoCase User-Agent "xcurl" bad_bot
+    SetEnvIfNoCase User-Agent "wget" bad_bot
     SetEnvIfNoCase User-Agent "sqlmap" bad_bot
     SetEnvIfNoCase User-Agent "acunetix" bad_bot
     SetEnvIfNoCase User-Agent "nikto" bad_bot
-    SetEnvIfNoCase User-Agent "curl" bad_bot
-    SetEnvIfNoCase User-Agent "wget" bad_bot
-    SetEnvIfNoCase User-Agent "masscan" bad_bot
-    SetEnvIfNoCase User-Agent "nmap" bad_bot
-
-    # ✅ IMPORTANT: Don't block Cordova/Android/iPhone user agents
-    SetEnvIfNoCase User-Agent "cordova" !bad_bot
-    SetEnvIfNoCase User-Agent "capacitor" !bad_bot
-    SetEnvIfNoCase User-Agent "ionic" !bad_bot
-    SetEnvIfNoCase User-Agent "android" !bad_bot
-    SetEnvIfNoCase User-Agent "iphone" !bad_bot
-    SetEnvIfNoCase User-Agent "webview" !bad_bot
+    SetEnvIfNoCase User-Agent "python-requests" bad_bot
+    SetEnvIfNoCase User-Agent "libwww-perl" bad_bot
+    SetEnvIfNoCase User-Agent "go-http-client" bad_bot
 </IfModule>
 
 <IfModule mod_authz_core.c>
@@ -252,35 +30,21 @@ Options -Indexes
     </RequireAll>
 </IfModule>
 
-# ============================================
-# BLOCK ACCESS TO SENSITIVE FILES (Apache FilesMatch)
-# ============================================
-<FilesMatch "(\.env|\.git|\.gitignore|composer\.json|composer\.lock|artisan|server\.php|package\.json|package-lock\.json|webpack\.mix\.js|yarn\.lock)$">
-    Order allow,deny
-    Deny from all
-</FilesMatch>
+<IfModule mod_deflate.c>
 
-# ============================================
-# API PROTECTION (Requires Authorization)
-# ✅ FIXED: Skip authorization for app requests
-# ============================================
-<IfModule mod_rewrite.c>
-    # Block access to API without authorization header
-    # ✅ EXCEPT for app requests (Cordova/Android/iPhone)
-    RewriteCond %{ENV:is_app_request} !=1
-    RewriteCond %{REQUEST_URI} ^/api/
-    RewriteCond %{HTTP:Authorization} ^$
-    RewriteCond %{REQUEST_METHOD} !OPTIONS
-    RewriteCond %{REQUEST_URI} !^/api/(ping|health|public|login|register|test)
-    RewriteRule ^ - [F]
+    SetEnvIfNoCase Request_URI \.apk$ no-gzip dont-vary
 </IfModule>
 
-# ============================================
-# CUSTOM ERROR PAGES
-# ============================================
-ErrorDocument 400 /index.php?error=400
-ErrorDocument 401 /index.php?error=401
-ErrorDocument 403 /index.php?error=403
-ErrorDocument 404 /index.php?error=404
-ErrorDocument 500 /index.php?error=500
-ErrorDocument 503 /index.php?error=503
+<IfModule mod_headers.c>
+
+    Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+    Header always set X-Content-Type-Options "nosniff"
+    Header always set X-Frame-Options "DENY"
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+    Header always set Permissions-Policy "accelerometer=(), camera=(), geolocation=(self), gyroscope=(), magnetometer=(), microphone=(), payment=(), usb=(), fullscreen=(self), interest-cohort=()"
+    Header always set Cross-Origin-Opener-Policy "same-origin"
+    Header always set Cross-Origin-Resource-Policy "same-origin"
+    Header always set Cross-Origin-Embedder-Policy "require-corp"
+    Header always set X-XSS-Protection "1; mode=block"
+    Header always set Content-Security-Policy "default-src 'self'; style-src 'self' 'unsafe-inline' https: https://cdn.jsdelivr.net https://fonts.googleapis.com; script-src 'self' 'unsafe-inline' 'unsafe-eval' https: https://cdn.jsdelivr.net https://www.google.com https://www.gstatic.com https://www.recaptcha.net; img-src 'self' data: blob: https:; font-src 'self' data: https: https://fonts.gstatic.com https://cdn.jsdelivr.net; frame-src 'self' https://www.google.com https://www.gstatic.com https://www.recaptcha.net https://recaptcha.google.com; object-src 'none'; base-uri 'self'; form-action 'self';"
+</IfModule>
