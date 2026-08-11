@@ -87,19 +87,40 @@ Options -Indexes
 # SECURITY HEADERS
 # ============================================
 <IfModule mod_headers.c>
+
+    # ============================================
+    # DETECT CORDOVA/APP REQUESTS
+    # ============================================
+    SetEnvIf User-Agent "cordova|ionic|capacitor|android|iphone|ipad|webview" is_app_request
+    SetEnvIf HTTP_X_FORWARDED_FOR "cordova|ionic|capacitor" is_app_request
+    SetEnvIf HTTP_APP_VERSION ".+" is_app_request
+
     # ============================================
     # BASIC SECURITY HEADERS
     # ============================================
-    Header always set X-Frame-Options "DENY"
     Header always set X-Content-Type-Options "nosniff"
     Header always set Referrer-Policy "strict-origin-when-cross-origin"
     Header always set X-XSS-Protection "1; mode=block"
     Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains; preload" env=HTTPS
 
     # ============================================
-    # CONTENT SECURITY POLICY (CSP)
+    # X-FRAME-OPTIONS (Allow Cordova but block others)
     # ============================================
-    Header always set Content-Security-Policy "default-src 'self'; style-src 'self' 'unsafe-inline' https:; script-src 'self' 'unsafe-inline' https://www.google.com https://www.gstatic.com https://www.recaptcha.net https:; img-src 'self' data: https:; font-src 'self' data: https:; frame-src 'self' https://www.google.com https://www.gstatic.com https://www.recaptcha.net; object-src 'none'; base-uri 'self'; frame-ancestors 'none';"
+    # Allow Cordova apps, but block regular browsers from framing
+    Header set X-Frame-Options "ALLOW-FROM https://your-cordova-app-domain.com" env=!is_app_request
+    Header unset X-Frame-Options env=is_app_request
+
+    # ============================================
+    # CONTENT SECURITY POLICY (CSP) - Cordova Compatible
+    # ============================================
+    # For Cordova apps: Allow frame-ancestors and relax restrictions
+    # For regular browsers: Strict security
+    <If "%{reqenv:is_app_request} = '1'">
+        Header set Content-Security-Policy "default-src 'self' data: gap: https://ssl.gstatic.com; style-src 'self' 'unsafe-inline' https:; script-src 'self' 'unsafe-inline' https://www.google.com https://www.gstatic.com https://www.recaptcha.net https: 'unsafe-eval'; img-src 'self' data: https:; font-src 'self' data: https:; frame-src 'self' https://www.google.com https://www.gstatic.com https://www.recaptcha.net; object-src 'none'; base-uri 'self'; frame-ancestors 'self' https://your-cordova-app-domain.com; connect-src 'self' https://your-api-domain.com https:;"
+    </If>
+    <Else>
+        Header set Content-Security-Policy "default-src 'self'; style-src 'self' 'unsafe-inline' https:; script-src 'self' 'unsafe-inline' https://www.google.com https://www.gstatic.com https://www.recaptcha.net https:; img-src 'self' data: https:; font-src 'self' data: https:; frame-src 'self' https://www.google.com https://www.gstatic.com https://www.recaptcha.net; object-src 'none'; base-uri 'self'; frame-ancestors 'none';"
+    </Else>
 
     # ============================================
     # PERMISSIONS POLICY
@@ -107,15 +128,31 @@ Options -Indexes
     Header always set Permissions-Policy "accelerometer=(), camera=(), geolocation=(self), gyroscope=(), magnetometer=(), microphone=(), payment=(), usb=(), fullscreen=(self)"
 
     # ============================================
-    # CORS HEADERS (For specific domains)
+    # CORS HEADERS (Support multiple origins)
     # ============================================
-    # Update this to your actual domain or use * for development
-    # For production, it's better to specify exact domains
-    Header always set Access-Control-Allow-Origin "https://mcc-pes.com"
+    # Allow Cordova app origins
+    SetEnvIf Origin "^https?://(localhost|127\.0\.0\.1|192\.168\.[0-9]+\.[0-9]+|file://|capacitor://|ionic://|http://localhost:[0-9]+)" is_local_origin
+    SetEnvIf Origin "https://mcc-pes\.com" is_allowed_origin
+    SetEnvIf Origin "capacitor://localhost" is_allowed_origin
+    SetEnvIf Origin "ionic://localhost" is_allowed_origin
+
+    # Set CORS headers for allowed origins
     Header always set Access-Control-Allow-Credentials "true"
     Header always set Access-Control-Allow-Methods "GET, POST, PUT, PATCH, DELETE, OPTIONS"
-    Header always set Access-Control-Allow-Headers "Content-Type, Authorization, X-Requested-With, X-XSRF-TOKEN, X-XSRF-Token, Accept, Origin"
+    Header always set Access-Control-Allow-Headers "Content-Type, Authorization, X-Requested-With, X-XSRF-TOKEN, X-XSRF-Token, Accept, Origin, Cache-Control"
     Header always set Access-Control-Max-Age "3600"
+
+    # Set Access-Control-Allow-Origin based on origin
+    <If "%{reqenv:is_allowed_origin} == '1'">
+        Header always set Access-Control-Allow-Origin "%{HTTP_ORIGIN}e"
+    </If>
+    <ElseIf "%{reqenv:is_local_origin} == '1'">
+        Header always set Access-Control-Allow-Origin "%{HTTP_ORIGIN}e"
+    </ElseIf>
+    <Else>
+        # Fallback for production - update with your actual domain
+        Header always set Access-Control-Allow-Origin "https://mcc-pes.com"
+    </Else>
 
     # ============================================
     # HANDLE CORS PREFLIGHT REQUESTS
