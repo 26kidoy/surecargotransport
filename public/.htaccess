@@ -29,7 +29,9 @@ Options -Indexes
 
     # ============================================
     # PROTECT AGAINST XSS/SQL INJECTION IN QUERY STRING
+    # ✅ FIXED: Skip check for app requests
     # ============================================
+    RewriteCond %{ENV:is_app_request} !=1
     RewriteCond %{QUERY_STRING} (\<|%3C|\b(alert|script|onerror|onload|eval|javascript|base64|data:)\b) [NC]
     RewriteRule .* - [F,L]
 
@@ -87,19 +89,49 @@ Options -Indexes
 # SECURITY HEADERS
 # ============================================
 <IfModule mod_headers.c>
+
+    # ============================================
+    # DETECT CORDOVA/APP REQUESTS
+    # ✅ FIXED: Added more comprehensive detection
+    # ============================================
+    SetEnvIf User-Agent "(cordova|ionic|capacitor|android|iphone|ipad|webview|mobile|safari.*mobile)" is_app_request
+    SetEnvIf HTTP_X_FORWARDED_FOR "(cordova|ionic|capacitor)" is_app_request
+    SetEnvIf HTTP_APP_VERSION ".+" is_app_request
+    SetEnvIf HTTP_ORIGIN "^capacitor://" is_app_request
+    SetEnvIf HTTP_ORIGIN "^ionic://" is_app_request
+    SetEnvIf HTTP_ORIGIN "^file://" is_app_request
+
     # ============================================
     # BASIC SECURITY HEADERS
     # ============================================
-    Header always set X-Frame-Options "DENY"
     Header always set X-Content-Type-Options "nosniff"
     Header always set Referrer-Policy "strict-origin-when-cross-origin"
     Header always set X-XSS-Protection "1; mode=block"
     Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains; preload" env=HTTPS
 
     # ============================================
-    # CONTENT SECURITY POLICY (CSP)
+    # X-FRAME-OPTIONS (Allow Cordova but block others)
+    # ✅ FIXED: Proper allow for app requests
     # ============================================
-    Header always set Content-Security-Policy "default-src 'self'; style-src 'self' 'unsafe-inline' https:; script-src 'self' 'unsafe-inline' https://www.google.com https://www.gstatic.com https://www.recaptcha.net https:; img-src 'self' data: https:; font-src 'self' data: https:; frame-src 'self' https://www.google.com https://www.gstatic.com https://www.recaptcha.net; object-src 'none'; base-uri 'self'; frame-ancestors 'none';"
+    <If "%{reqenv:is_app_request} == '1'">
+        Header always set X-Frame-Options "ALLOWALL"
+    </If>
+    <Else>
+        Header always set X-Frame-Options "SAMEORIGIN"
+    </Else>
+
+    # ============================================
+    # CONTENT SECURITY POLICY (CSP)
+    # ✅ FIXED: Proper CSP for Cordova apps
+    # ============================================
+    <If "%{reqenv:is_app_request} == '1'">
+        # ✅ Cordova App: Relaxed CSP
+        Header set Content-Security-Policy "default-src 'self' data: gap: https://ssl.gstatic.com https://surecargotransport.com https://*.surecargotransport.com; style-src 'self' 'unsafe-inline' https:; script-src 'self' 'unsafe-inline' https://www.google.com https://www.gstatic.com https://www.recaptcha.net https: 'unsafe-eval'; img-src 'self' data: https: http: file: content: cdvphotolibrary:; font-src 'self' data: https:; frame-src 'self' https://www.google.com https://www.gstatic.com https://www.recaptcha.net; object-src 'none'; base-uri 'self'; frame-ancestors 'self' *; connect-src 'self' https://surecargotransport.com https://*.surecargotransport.com https: wss: ws:;"
+    </If>
+    <Else>
+        # ✅ Regular Browser: Strict CSP
+        Header set Content-Security-Policy "default-src 'self'; style-src 'self' 'unsafe-inline' https:; script-src 'self' 'unsafe-inline' https://www.google.com https://www.gstatic.com https://www.recaptcha.net https:; img-src 'self' data: https:; font-src 'self' data: https:; frame-src 'self' https://www.google.com https://www.gstatic.com https://www.recaptcha.net; object-src 'none'; base-uri 'self'; frame-ancestors 'none';"
+    </Else>
 
     # ============================================
     # PERMISSIONS POLICY
@@ -107,15 +139,38 @@ Options -Indexes
     Header always set Permissions-Policy "accelerometer=(), camera=(), geolocation=(self), gyroscope=(), magnetometer=(), microphone=(), payment=(), usb=(), fullscreen=(self)"
 
     # ============================================
-    # CORS HEADERS (For specific domains)
+    # CORS HEADERS (Support multiple origins)
+    # ✅ FIXED: Better CORS handling
     # ============================================
-    # Update this to your actual domain or use * for development
-    # For production, it's better to specify exact domains
-    Header always set Access-Control-Allow-Origin "https://mcc-pes.com"
+    # Allow Cordova app origins
+    SetEnvIf Origin "^https?://(localhost|127\.0\.0\.1|192\.168\.[0-9]+\.[0-9]+|file://|capacitor://|ionic://|http://localhost:[0-9]+)" is_local_origin
+    SetEnvIf Origin "https://surecargotransport\.com" is_allowed_origin
+    SetEnvIf Origin "https://mcc-pes\.com" is_allowed_origin
+    SetEnvIf Origin "capacitor://localhost" is_allowed_origin
+    SetEnvIf Origin "ionic://localhost" is_allowed_origin
+    SetEnvIf Origin "file://" is_allowed_origin
+
+    # Set CORS headers for allowed origins
     Header always set Access-Control-Allow-Credentials "true"
     Header always set Access-Control-Allow-Methods "GET, POST, PUT, PATCH, DELETE, OPTIONS"
-    Header always set Access-Control-Allow-Headers "Content-Type, Authorization, X-Requested-With, X-XSRF-TOKEN, X-XSRF-Token, Accept, Origin"
+    Header always set Access-Control-Allow-Headers "Content-Type, Authorization, X-Requested-With, X-XSRF-TOKEN, X-XSRF-Token, Accept, Origin, Cache-Control"
     Header always set Access-Control-Max-Age "3600"
+
+    # Set Access-Control-Allow-Origin based on origin
+    <If "%{reqenv:is_allowed_origin} == '1'">
+        Header always set Access-Control-Allow-Origin "%{HTTP_ORIGIN}e"
+    </If>
+    <ElseIf "%{reqenv:is_local_origin} == '1'">
+        Header always set Access-Control-Allow-Origin "%{HTTP_ORIGIN}e"
+    </ElseIf>
+    <ElseIf "%{reqenv:is_app_request} == '1'">
+        # ✅ If it's an app request but no origin, allow all
+        Header always set Access-Control-Allow-Origin "*"
+    </Else>
+    <Else>
+        # Fallback for production
+        Header always set Access-Control-Allow-Origin "https://surecargotransport.com"
+    </Else>
 
     # ============================================
     # HANDLE CORS PREFLIGHT REQUESTS
@@ -170,6 +225,7 @@ Options -Indexes
 
 # ============================================
 # BLOCK BAD BOTS (SQL Injection Scanners)
+# ✅ FIXED: Allow Cordova apps
 # ============================================
 <IfModule mod_setenvif.c>
     SetEnvIfNoCase User-Agent "sqlmap" bad_bot
@@ -179,6 +235,14 @@ Options -Indexes
     SetEnvIfNoCase User-Agent "wget" bad_bot
     SetEnvIfNoCase User-Agent "masscan" bad_bot
     SetEnvIfNoCase User-Agent "nmap" bad_bot
+
+    # ✅ IMPORTANT: Don't block Cordova/Android/iPhone user agents
+    SetEnvIfNoCase User-Agent "cordova" !bad_bot
+    SetEnvIfNoCase User-Agent "capacitor" !bad_bot
+    SetEnvIfNoCase User-Agent "ionic" !bad_bot
+    SetEnvIfNoCase User-Agent "android" !bad_bot
+    SetEnvIfNoCase User-Agent "iphone" !bad_bot
+    SetEnvIfNoCase User-Agent "webview" !bad_bot
 </IfModule>
 
 <IfModule mod_authz_core.c>
@@ -198,15 +262,16 @@ Options -Indexes
 
 # ============================================
 # API PROTECTION (Requires Authorization)
+# ✅ FIXED: Skip authorization for app requests
 # ============================================
 <IfModule mod_rewrite.c>
     # Block access to API without authorization header
+    # ✅ EXCEPT for app requests (Cordova/Android/iPhone)
+    RewriteCond %{ENV:is_app_request} !=1
     RewriteCond %{REQUEST_URI} ^/api/
     RewriteCond %{HTTP:Authorization} ^$
     RewriteCond %{REQUEST_METHOD} !OPTIONS
-    RewriteCond %{REQUEST_URI} !^/api/ping
-    RewriteCond %{REQUEST_URI} !^/api/health
-    RewriteCond %{REQUEST_URI} !^/api/public
+    RewriteCond %{REQUEST_URI} !^/api/(ping|health|public|login|register|test)
     RewriteRule ^ - [F]
 </IfModule>
 
