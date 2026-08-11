@@ -1,11 +1,12 @@
 <IfModule mod_rewrite.c>
     RewriteEngine On
 
-    RewriteCond %{HTTP_USER_AGENT} (Android|iPhone|iPad|iPod|Mobile|Cordova|WebView|wv|Crosswalk|Capacitor|Ionic) [NC]
-    RewriteRule .* - [L]
-
     RewriteCond %{HTTP_USER_AGENT} (sqlmap|acunetix|nikto|wget|curl|culr|xcurl|python-requests|libwww-perl|go-http-client|masscan|nmap|zmap|burp) [NC]
-    RewriteRule .* - [F,L]
+    RewriteRule ^ - [F,L]
+
+    RewriteCond %{REQUEST_FILENAME} -f [OR]
+    RewriteCond %{REQUEST_FILENAME} -d
+    RewriteRule ^ - [L]
 
     RewriteCond %{REQUEST_URI} !^/public/
     RewriteRule ^(.*)$ public/$1 [L,QSA]
@@ -15,124 +16,96 @@
     RewriteRule ^ index.php [L]
 </IfModule>
 
-<IfModule mod_setenvif.c>
-    SetEnvIfNoCase User-Agent "Android" allow_bot
-    SetEnvIfNoCase User-Agent "iPhone" allow_bot
-    SetEnvIfNoCase User-Agent "iPad" allow_bot
-    SetEnvIfNoCase User-Agent "iPod" allow_bot
-    SetEnvIfNoCase User-Agent "Mobile" allow_bot
-    SetEnvIfNoCase User-Agent "Cordova" allow_bot
-    SetEnvIfNoCase User-Agent "WebView" allow_bot
-    SetEnvIfNoCase User-Agent "wv" allow_bot
-    SetEnvIfNoCase User-Agent "Crosswalk" allow_bot
-    SetEnvIfNoCase User-Agent "Capacitor" allow_bot
-    SetEnvIfNoCase User-Agent "Ionic" allow_bot
+<FilesMatch "^\.">
+    Require all denied
+</FilesMatch>
 
-    SetEnvIfNoCase User-Agent "curl" bad_bot
-    SetEnvIfNoCase User-Agent "culr" bad_bot
-    SetEnvIfNoCase User-Agent "xcurl" bad_bot
-    SetEnvIfNoCase User-Agent "wget" bad_bot
-    SetEnvIfNoCase User-Agent "sqlmap" bad_bot
-    SetEnvIfNoCase User-Agent "acunetix" bad_bot
-    SetEnvIfNoCase User-Agent "nikto" bad_bot
-    SetEnvIfNoCase User-Agent "python-requests" bad_bot
-    SetEnvIfNoCase User-Agent "libwww-perl" bad_bot
-    SetEnvIfNoCase User-Agent "go-http-client" bad_bot
-    SetEnvIfNoCase User-Agent "masscan" bad_bot
-    SetEnvIfNoCase User-Agent "nmap" bad_bot
-    SetEnvIfNoCase User-Agent "zmap" bad_bot
-    SetEnvIfNoCase User-Agent "burp" bad_bot
-</IfModule>
+<FilesMatch "(^#.*#|\.(bak|config|dist|fla|inc|ini|log|psd|sh|sql|sw[op])|~)$">
+    Require all denied
+</FilesMatch>
 
 <IfModule mod_authz_core.c>
-    <RequireAll>
-        Require all granted
-        Require not env bad_bot
-    </RequireAll>
-</IfModule>
-
-<IfModule mod_deflate.c>
-    SetEnvIfNoCase Request_URI \.apk$ no-gzip dont-vary
-    SetEnvIfNoCase Request_URI \.ipa$ no-gzip dont-vary
-    SetEnvIfNoCase Request_URI \.aab$ no-gzip dont-vary
+    Require all granted
 </IfModule>
 
 <IfModule mod_headers.c>
+
     Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+
     Header always set X-Content-Type-Options "nosniff"
-    Header always set X-Frame-Options "DENY"
+
     Header always set Referrer-Policy "strict-origin-when-cross-origin"
-    Header always set X-XSS-Protection "1; mode=block"
+
     Header always set Permissions-Policy "accelerometer=(), camera=(), geolocation=(self), gyroscope=(), magnetometer=(), microphone=(), payment=(), usb=(), fullscreen=(self), interest-cohort=()"
-    Header always set Cross-Origin-Opener-Policy "same-origin"
-    Header always set Cross-Origin-Resource-Policy "same-origin"
-    Header always set Cross-Origin-Embedder-Policy "require-corp"
 
-    SetEnvIf User-Agent "Cordova" is_cordova
-    SetEnvIf User-Agent "WebView" is_cordova
-    SetEnvIf User-Agent "wv" is_cordova
-    SetEnvIf User-Agent "Crosswalk" is_cordova
-    SetEnvIf User-Agent "Capacitor" is_cordova
-    SetEnvIf User-Agent "Ionic" is_cordova
-    SetEnvIf User-Agent "Android.*Mobile" is_mobile
-    SetEnvIf User-Agent "iPhone" is_mobile
-    SetEnvIf User-Agent "iPad" is_mobile
+    Header always unset X-Frame-Options
 
-    <If "env('is_cordova') == '1' || env('is_mobile') == '1'">
-        Header always set Content-Security-Policy "default-src 'self' 'unsafe-inline' 'unsafe-eval' https: data: blob:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https: data: blob: https://cdn.jsdelivr.net https://www.google.com https://www.gstatic.com https://www.recaptcha.net; style-src 'self' 'unsafe-inline' https: data: blob: https://fonts.googleapis.com https://cdn.jsdelivr.net; img-src 'self' data: blob: https: http:; font-src 'self' data: https: https://fonts.gstatic.com https://cdn.jsdelivr.net; connect-src 'self' https: ws: wss: data: blob:; frame-src 'self' https: https://www.google.com https://www.gstatic.com https://www.recaptcha.net https://recaptcha.google.com; object-src 'none'; base-uri 'self'; form-action 'self';"
-    </If>
-    
-    <Else>
-        Header always set Content-Security-Policy "default-src 'self'; style-src 'self' 'unsafe-inline' https: https://cdn.jsdelivr.net https://fonts.googleapis.com; script-src 'self' 'unsafe-inline' 'unsafe-eval' https: https://cdn.jsdelivr.net https://www.google.com https://www.gstatic.com https://www.recaptcha.net; img-src 'self' data: blob: https:; font-src 'self' data: https: https://fonts.gstatic.com https://cdn.jsdelivr.net; frame-src 'self' https://www.google.com https://www.gstatic.com https://www.recaptcha.net https://recaptcha.google.com; object-src 'none'; base-uri 'self'; form-action 'self';"
-    </Else>
+    Header always unset Cross-Origin-Opener-Policy
+    Header always unset Cross-Origin-Resource-Policy
+    Header always unset Cross-Origin-Embedder-Policy
 
-    <If "env('is_cordova') == '1' || env('is_mobile') == '1'">
-        Header always set Access-Control-Allow-Origin "*"
-        Header always set Access-Control-Allow-Methods "GET, POST, PUT, DELETE, OPTIONS"
-        Header always set Access-Control-Allow-Headers "Content-Type, Authorization, X-Requested-With"
-        Header always set Access-Control-Allow-Credentials "true"
-    </If>
+    Header always set Content-Security-Policy "default-src 'self' https: data: blob:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://www.google.com https://www.gstatic.com https://www.recaptcha.net; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://fonts.googleapis.com; img-src 'self' data: blob: https: http:; font-src 'self' data: https://fonts.gstatic.com https://cdn.jsdelivr.net; connect-src 'self' https: ws: wss: data: blob:; frame-src 'self' https://surecargotransport.com https://www.google.com https://www.gstatic.com https://www.recaptcha.net https://recaptcha.google.com; object-src 'none'; base-uri 'self'; form-action 'self';"
+
+</IfModule>
+
+<IfModule mod_headers.c>
+
+    Header always set Access-Control-Allow-Origin "*"
+    Header always set Access-Control-Allow-Methods "GET, POST, PUT, DELETE, OPTIONS"
+    Header always set Access-Control-Allow-Headers "Content-Type, Authorization, X-Requested-With, Accept"
+
 </IfModule>
 
 <IfModule mod_rewrite.c>
     RewriteCond %{REQUEST_METHOD} OPTIONS
-    RewriteRule ^(.*)$ $1 [R=200,L]
+    RewriteRule ^ - [R=204,L]
 </IfModule>
 
+Options -Indexes
+
 <IfModule mod_expires.c>
+
     ExpiresActive On
+
     ExpiresByType image/jpg "access plus 1 year"
     ExpiresByType image/jpeg "access plus 1 year"
     ExpiresByType image/gif "access plus 1 year"
     ExpiresByType image/png "access plus 1 year"
     ExpiresByType image/svg+xml "access plus 1 year"
     ExpiresByType image/webp "access plus 1 year"
+
     ExpiresByType text/css "access plus 1 month"
+
     ExpiresByType application/javascript "access plus 1 month"
     ExpiresByType application/x-javascript "access plus 1 month"
     ExpiresByType text/javascript "access plus 1 month"
+
     ExpiresByType application/font-woff2 "access plus 1 year"
     ExpiresByType application/font-woff "access plus 1 year"
     ExpiresByType font/woff2 "access plus 1 year"
     ExpiresByType font/woff "access plus 1 year"
     ExpiresByType application/vnd.ms-fontobject "access plus 1 year"
+
 </IfModule>
 
 <IfModule mod_deflate.c>
-    AddOutputFilterByType DEFLATE text/html text/plain text/xml text/css text/javascript application/javascript application/x-javascript application/json application/xml application/rss+xml application/atom+xml image/svg+xml
+
+    SetEnvIfNoCase Request_URI "\.(apk|ipa|aab)$" no-gzip dont-vary
+
+    AddOutputFilterByType DEFLATE text/html
+    AddOutputFilterByType DEFLATE text/plain
+    AddOutputFilterByType DEFLATE text/xml
+    AddOutputFilterByType DEFLATE text/css
+    AddOutputFilterByType DEFLATE text/javascript
+    AddOutputFilterByType DEFLATE application/javascript
+    AddOutputFilterByType DEFLATE application/x-javascript
+    AddOutputFilterByType DEFLATE application/json
+    AddOutputFilterByType DEFLATE application/xml
+    AddOutputFilterByType DEFLATE application/rss+xml
+    AddOutputFilterByType DEFLATE application/atom+xml
+    AddOutputFilterByType DEFLATE image/svg+xml
+
 </IfModule>
-
-Options -Indexes
-
-<FilesMatch "^\.">
-    Order allow,deny
-    Deny from all
-</FilesMatch>
-
-<FilesMatch "(^#.*#|\.(bak|config|dist|fla|inc|ini|log|psd|sh|sql|sw[op])|~)$">
-    Order allow,deny
-    Deny from all
-</FilesMatch>
 
 ErrorDocument 403 /403.html
 ErrorDocument 404 /404.html
