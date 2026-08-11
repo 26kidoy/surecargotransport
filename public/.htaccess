@@ -1,13 +1,18 @@
 <IfModule mod_rewrite.c>
     RewriteEngine On
 
-
+    # BLOCK BAD BOTS (Moved to the top for performance)
     RewriteCond %{HTTP_USER_AGENT} (curl|culr|xcurl|wget|sqlmap|acunetix|nikto|python-requests|libwww-perl|go-http-client) [NC]
     RewriteRule .* - [F,L]
 
-
+    # ROUTE ALL TRAFFIC TO THE /public FOLDER (This was missing!)
     RewriteCond %{REQUEST_URI} !^/public/
     RewriteRule ^(.*)$ public/$1 [L,QSA]
+
+    # STANDARD FRAMEWORK ROUTING (For Laravel/CodeIgniter/etc)
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^ index.php [L]
 </IfModule>
 
 <IfModule mod_setenvif.c>
@@ -31,12 +36,10 @@
 </IfModule>
 
 <IfModule mod_deflate.c>
-
     SetEnvIfNoCase Request_URI \.apk$ no-gzip dont-vary
 </IfModule>
 
 <IfModule mod_headers.c>
-
     Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
     Header always set X-Content-Type-Options "nosniff"
     Header always set X-Frame-Options "DENY"
