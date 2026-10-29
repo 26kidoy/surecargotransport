@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="SureCargo Transport cargo services — egg delivery, box transportation, dried seafoods, general cargo, and commercial cargo from Bantayan Island to Bacolod and Cebu." />
+  <meta name="theme-color" content="#102A43" />
+  <title>Our Services — SureCargo Transport</title>
+  <link rel="icon" href="assets/images/logo.png" type="image/png" />
+  <style>
+    :root {
+      --navy: #102A43; --primary-blue: #1677E8; --light-blue: #EAF4FF; --white: #FFFFFF;
+      --text: #334155; --muted: #64748B; --border: #E2E8F0; --light-gray: #F4F7FB; --amber: #F59E0B;
+      --shadow: 0 10px 30px rgba(16,42,67,0.08); --shadow-lg: 0 20px 50px rgba(16,42,67,0.15);
+      --radius: 16px; --radius-sm: 10px; --radius-lg: 24px; --transition: 0.25s ease;
+      --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+    body { font-family: var(--font); color: var(--text); background: var(--white); line-height: 1.6; font-size: 16px; overflow-x: hidden; }
+    img { max-width: 100%; display: block; }
+    a { color: var(--primary-blue); text-decoration: none; }
+    h1, h2, h3, h4 { color: var(--navy); line-height: 1.2; font-weight: 800; letter-spacing: -0.02em; }
+    h1 { font-size: clamp(1.9rem, 5vw, 3.2rem); }
+    h2 { font-size: clamp(1.5rem, 3.5vw, 2.3rem); }
+    h3 { font-size: clamp(1.1rem, 2vw, 1.35rem); }
+    .container { width: 100%; max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+    .section { padding: clamp(48px, 8vw, 90px) 0; }
+    .section-light { background: var(--light-gray); }
+    .section-navy { background: var(--navy); color: #fff; }
+    .section-navy h2, .section-navy h3 { color: #fff; }
+    .section-navy p { color: #CBD5E1; }
+    .section-head { text-align: center; max-width: 720px; margin: 0 auto clamp(30px, 5vw, 50px); }
+    .section-head p { color: var(--muted); margin-top: 12px; font-size: 1.05rem; }
+    .eyebrow { display: inline-block; font-size: 0.78rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--primary-blue); background: var(--light-blue); padding: 6px 14px; border-radius: 999px; margin-bottom: 14px; }
+
+    .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 13px 24px; border-radius: 999px; font-weight: 700; font-size: 0.95rem; border: 2px solid transparent; cursor: pointer; transition: var(--transition); text-align: center; min-height: 48px; font-family: var(--font); }
+    .btn-primary { background: var(--primary-blue); color: #fff; }
+    .btn-primary:hover { background: #0F5FC4; transform: translateY(-2px); box-shadow: 0 12px 24px rgba(22,119,232,0.3); }
+    .btn-secondary { background: var(--white); color: var(--navy); border-color: var(--border); }
+    .btn-secondary:hover { border-color: var(--primary-blue); color: var(--primary-blue); }
+    .btn-amber { background: var(--amber); color: #fff; }
+    .btn-amber:hover { background: #D97E06; transform: translateY(-2px); }
+    .btn-outline-white { background: transparent; color: #fff; border-color: rgba(255,255,255,0.6); }
+    .btn-outline-white:hover { background: rgba(255,255,255,0.12); border-color: #fff; }
+    .btn-sm { padding: 10px 18px; font-size: 0.88rem; min-height: 42px; }
+
+    /* HEADER */
+    .site-header { position: sticky; top: 0; z-index: 900; background: rgba(255,255,255,0.96); backdrop-filter: blur(10px); border-bottom: 1px solid var(--border); }
+    .header-inner { display: flex; align-items: center; justify-content: space-between; gap: 16px; height: 72px; }
+    .brand { display: flex; align-items: center; gap: 10px; }
+    .brand img { width: 40px; height: 40px; object-fit: contain; border-radius: 8px; }
+    .brand-text { display: flex; flex-direction: column; line-height: 1.15; }
+    .brand-text strong { font-size: 1.05rem; color: var(--navy); font-weight: 800; }
+    .brand-text span { font-size: 0.72rem; color: var(--muted); font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; }
+    .main-nav { display: flex; align-items: center; gap: 4px; }
+    .main-nav a { padding: 9px 14px; border-radius: 8px; color: var(--navy); font-weight: 600; font-size: 0.92rem; transition: var(--transition); }
+    .main-nav a:hover { background: var(--light-blue); color: var(--primary-blue); }
+    .main-nav a.active { color: var(--primary-blue); background: var(--light-blue); }
+    .header-actions { display: flex; align-items: center; gap: 10px; }
+    .hamburger { display: none; width: 46px; height: 46px; border: 1px solid var(--border); background: var(--white); border-radius: 10px; cursor: pointer; flex-direction: column; align-items: center; justify-content: center; gap: 5px; }
+    .hamburger span { display: block; width: 20px; height: 2px; background: var(--navy); border-radius: 2px; }
+
+    /* SIDEBAR */
+    .sidebar-overlay { position: fixed; inset: 0; background: rgba(16,42,67,0.55); opacity: 0; visibility: hidden; transition: var(--transition); z-index: 950; }
+    .sidebar-overlay.open { opacity: 1; visibility: visible; }
+    .sidebar { position: fixed; top: 0; right: 0; width: min(340px, 88vw); height: 100%; background: var(--navy); color: #fff; z-index: 1000; transform: translateX(100%); transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1); display: flex; flex-direction: column; overflow-y: auto; }
+    .sidebar.open { transform: translateX(0); }
+    .sidebar-head { display: flex; align-items: center; justify-content: space-between; padding: 20px 22px; border-bottom: 1px solid rgba(255,255,255,0.12); position: sticky; top: 0; background: var(--navy); z-index: 2; }
+    .sidebar-head .brand-text strong { color: #fff; }
+    .sidebar-head .brand-text span { color: #94A3B8; }
+    .sidebar-close { width: 40px; height: 40px; border: none; background: rgba(255,255,255,0.1); color: #fff; border-radius: 10px; font-size: 1.4rem; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+    .sidebar-close:hover { background: rgba(255,255,255,0.2); }
+    .sidebar-nav { padding: 14px 12px 30px; }
+    .sidebar-nav a { display: flex; align-items: center; gap: 10px; padding: 13px 16px; color: #E2E8F0; font-weight: 600; font-size: 0.95rem; border-radius: 10px; margin-bottom: 2px; transition: var(--transition); }
+    .sidebar-nav a:hover, .sidebar-nav a.active { background: rgba(22,119,232,0.25); color: #fff; }
+    .sidebar-nav a .ico { width: 24px; text-align: center; font-size: 1rem; opacity: 0.9; }
+    .sidebar-divider { height: 1px; background: rgba(255,255,255,0.12); margin: 12px 16px; }
+    .sidebar-cta { padding: 0 16px 20px; }
+
+    /* PAGE HERO */
+    .page-hero {
+      background: linear-gradient(115deg, rgba(16,42,67,0.95) 0%, rgba(16,42,67,0.85) 60%, rgba(22,119,232,0.6) 100%),
+                  url("assets/images/cargo-delivery.jpg") center/cover no-repeat;
+      color: #fff; padding: clamp(70px, 12vw, 130px) 0; text-align: center;
+    }
+    .page-hero h1 { color: #fff; margin-bottom: 14px; }
+    .page-hero p { color: #DBEAFE; max-width: 680px; margin: 0 auto; font-size: clamp(1rem, 1.5vw, 1.12rem); }
+    .page-hero .eyebrow { background: rgba(245,158,11,0.2); color: #FCD34D; }
+    .breadcrumb { padding: 16px 0; font-size: 0.85rem; color: var(--muted); }
+    .breadcrumb a { color: var(--muted); }
+    .breadcrumb a:hover { color: var(--primary-blue); }
+    .breadcrumb span { margin: 0 6px; }
+
+    /* NOTICE */
+    .notice {
+      background: #FEF3C7; border: 1px solid #FCD34D; border-left: 5px solid var(--amber);
+      border-radius: var(--radius-sm); padding: 16px 20px; color: #78350F; font-size: 0.9rem;
+      margin-bottom: 40px;
+    }
+    .notice strong { color: #92400E; }
+
+    /* SERVICE DETAIL CARDS */
+    .service-detail {
+      background: var(--white); border: 1px solid var(--border); border-radius: var(--radius-lg);
+      overflow: hidden; box-shadow: var(--shadow); margin-bottom: 34px;
+      display: grid; grid-template-columns: 1fr 1.15fr; gap: 0;
+      transition: var(--transition);
+    }
+    .service-detail:hover { box-shadow: var(--shadow-lg); }
+    .service-detail.reverse { grid-template-columns: 1.15fr 1fr; }
+    .service-detail.reverse .service-detail-media { order: 2; }
+    .service-detail.reverse .service-detail-body { order: 1; }
+    .service-detail-media { min-height: 320px; background: var(--light-blue); overflow: hidden; }
+    .service-detail-media img { width: 100%; height: 100%; object-fit: cover; }
+    .service-detail-body { padding: clamp(26px, 4vw, 42px); display: flex; flex-direction: column; }
+    .service-tag { display: inline-block; background: var(--light-blue); color: var(--primary-blue); font-weight: 700; font-size: 0.76rem; padding: 5px 12px; border-radius: 999px; margin-bottom: 12px; align-self: flex-start; text-transform: uppercase; letter-spacing: 0.05em; }
+    .service-detail-body h3 { margin-bottom: 10px; font-size: 1.4rem; }
+    .service-detail-body > p { color: var(--muted); margin-bottom: 18px; font-size: 0.96rem; }
+    .detail-block { margin-bottom: 16px; }
+    .detail-block h4 { color: var(--navy); font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 8px; }
+    .detail-block ul { list-style: none; display: grid; gap: 6px; }
+    .detail-block ul li { font-size: 0.9rem; color: var(--text); padding-left: 18px; position: relative; }
+    .detail-block ul li::before { content: "•"; color: var(--primary-blue); position: absolute; left: 4px; font-weight: 800; }
+    .detail-route { display: inline-flex; align-items: center; gap: 8px; background: var(--light-gray); padding: 8px 14px; border-radius: 8px; font-size: 0.88rem; font-weight: 600; color: var(--navy); margin-bottom: 18px; }
+    .service-detail-body .btn { align-self: flex-start; margin-top: auto; }
+
+    /* INQUIRY PANEL */
+    .inquiry-panel { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: clamp(28px, 4vw, 46px); box-shadow: var(--shadow); text-align: center; }
+    .inquiry-panel h2 { margin-bottom: 12px; }
+    .inquiry-panel p { color: var(--muted); max-width: 620px; margin: 0 auto 24px; }
+    .inquiry-buttons { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; }
+
+    /* FAQ */
+    .faq-list { max-width: 820px; margin: 0 auto; display: grid; gap: 12px; }
+    .faq-item { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius-sm); overflow: hidden; }
+    .faq-q { width: 100%; text-align: left; background: none; border: none; padding: 18px 22px; font-weight: 700; color: var(--navy); font-size: 0.96rem; cursor: pointer; display: flex; justify-content: space-between; align-items: center; gap: 12px; font-family: var(--font); }
+    .faq-q:hover { background: var(--light-gray); }
+    .faq-q .chev { transition: transform 0.2s; color: var(--primary-blue); font-weight: 800; }
+    .faq-item.open .faq-q .chev { transform: rotate(180deg); }
+    .faq-a { max-height: 0; overflow: hidden; transition: max-height 0.3s ease; }
+    .faq-item.open .faq-a { max-height: 400px; }
+    .faq-a-inner { padding: 0 22px 18px; color: var(--muted); font-size: 0.92rem; }
+
+    /* IMG FALLBACK */
+    .img-fallback { background: linear-gradient(135deg, #EAF4FF, #D6E8FF); display: flex; align-items: center; justify-content: center; color: var(--primary-blue); font-weight: 700; font-size: 0.9rem; text-align: center; padding: 20px; }
+
+    /* FOOTER */
+    .site-footer { background: var(--navy); color: #CBD5E1; padding: 60px 0 24px; }
+    .footer-grid { display: grid; grid-template-columns: 1.4fr 1fr 1fr 1.2fr; gap: 34px; margin-bottom: 40px; }
+    .footer-brand { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+    .footer-brand img { width: 40px; height: 40px; border-radius: 8px; object-fit: contain; background: #fff; padding: 3px; }
+    .footer-brand strong { color: #fff; font-size: 1.05rem; }
+    .footer-col h4 { color: #fff; font-size: 0.95rem; margin-bottom: 16px; }
+    .footer-col p { font-size: 0.88rem; color: #94A3B8; margin-bottom: 10px; }
+    .footer-col ul { list-style: none; display: grid; gap: 9px; }
+    .footer-col ul a { color: #CBD5E1; font-size: 0.88rem; transition: var(--transition); }
+    .footer-col ul a:hover { color: #fff; padding-left: 4px; }
+    .footer-bottom { border-top: 1px solid rgba(255,255,255,0.1); padding-top: 22px; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 10px; font-size: 0.82rem; color: #94A3B8; }
+
+    /* CHATBOT */
+    .chat-fab { position: fixed; bottom: 22px; right: 22px; width: 60px; height: 60px; border-radius: 50%; background: var(--primary-blue); color: #fff; border: none; cursor: pointer; box-shadow: 0 12px 30px rgba(22,119,232,0.45); display: flex; align-items: center; justify-content: center; font-size: 1.5rem; z-index: 880; transition: var(--transition); }
+    .chat-fab:hover { transform: scale(1.08); background: #0F5FC4; }
+    .chat-widget { position: fixed; bottom: 92px; right: 22px; width: min(370px, calc(100vw - 32px)); max-height: min(560px, calc(100vh - 130px)); background: #fff; border-radius: 18px; box-shadow: 0 24px 60px rgba(16,42,67,0.28); display: flex; flex-direction: column; overflow: hidden; z-index: 890; transform: translateY(16px) scale(0.98); opacity: 0; visibility: hidden; transition: var(--transition); }
+    .chat-widget.open { transform: translateY(0) scale(1); opacity: 1; visibility: visible; }
+    .chat-head { background: linear-gradient(120deg, var(--navy), #1E3A5F); color: #fff; padding: 14px 16px; display: flex; align-items: center; gap: 10px; }
+    .chat-head .avatar { width: 36px; height: 36px; border-radius: 50%; background: var(--primary-blue); display: flex; align-items: center; justify-content: center; font-weight: 800; flex-shrink: 0; }
+    .chat-head .info { flex: 1; line-height: 1.2; }
+    .chat-head .info strong { display: block; font-size: 0.92rem; }
+    .chat-head .info span { font-size: 0.72rem; color: #93C5FD; }
+    .chat-head .close-btn { background: rgba(255,255,255,0.12); border: none; color: #fff; width: 32px; height: 32px; border-radius: 8px; cursor: pointer; font-size: 1.1rem; }
+    .chat-body { flex: 1; overflow-y: auto; padding: 16px; background: var(--light-gray); display: flex; flex-direction: column; gap: 10px; }
+    .msg { max-width: 84%; padding: 10px 14px; border-radius: 14px; font-size: 0.88rem; line-height: 1.5; word-wrap: break-word; }
+    .msg.bot { background: #fff; color: var(--text); border-bottom-left-radius: 4px; align-self: flex-start; box-shadow: 0 2px 8px rgba(16,42,67,0.06); }
+    .msg.user { background: var(--primary-blue); color: #fff; border-bottom-right-radius: 4px; align-self: flex-end; }
+    .msg.typing { display: inline-flex; gap: 4px; align-items: center; }
+    .msg.typing span { width: 6px; height: 6px; border-radius: 50%; background: var(--muted); animation: blink 1.2s infinite; }
+    .msg.typing span:nth-child(2) { animation-delay: 0.2s; }
+    .msg.typing span:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes blink { 0%,80%,100% { opacity: 0.3; } 40% { opacity: 1; } }
+    .chat-suggestions { display: flex; flex-wrap: wrap; gap: 6px; padding: 0 16px 10px; background: var(--light-gray); }
+    .chat-suggestions button { font-size: 0.76rem; padding: 7px 11px; border-radius: 999px; border: 1px solid var(--border); background: #fff; color: var(--navy); cursor: pointer; font-weight: 600; transition: var(--transition); font-family: var(--font); }
+    .chat-suggestions button:hover { border-color: var(--primary-blue); color: var(--primary-blue); }
+    .chat-input-row { display: flex; gap: 8px; padding: 12px; background: #fff; border-top: 1px solid var(--border); }
+    .chat-input-row input { flex: 1; border: 1px solid var(--border); border-radius: 10px; padding: 11px 14px; font-size: 0.9rem; font-family: var(--font); outline: none; color: var(--text); }
+    .chat-input-row input:focus { border-color: var(--primary-blue); box-shadow: 0 0 0 3px rgba(22,119,232,0.15); }
+    .chat-input-row button { width: 46px; border: none; border-radius: 10px; background: var(--primary-blue); color: #fff; cursor: pointer; font-size: 1.1rem; }
+    .chat-clear { width: 100%; border: none; background: transparent; color: var(--muted); font-size: 0.76rem; padding: 8px; cursor: pointer; border-top: 1px solid var(--border); font-family: var(--font); }
+
+    :focus-visible { outline: 3px solid var(--amber); outline-offset: 2px; }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; scroll-behavior: auto !important; } }
+
+    @media (max-width: 900px) {
+      .service-detail, .service-detail.reverse { grid-template-columns: 1fr; }
+      .service-detail.reverse .service-detail-media { order: 0; }
+      .service-detail.reverse .service-detail-body { order: 0; }
+      .service-detail-media { min-height: 220px; }
+    }
+    @media (max-width: 1024px) {
+      .main-nav { display: none; } .hamburger { display: flex; } .header-actions .btn-quote-text { display: none; }
+      .footer-grid { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 640px) {
+      .header-inner { height: 64px; } .brand-text span { display: none; }
+      .footer-grid { grid-template-columns: 1fr; gap: 26px; }
+      .chat-fab { bottom: 16px; right: 16px; width: 54px; height: 54px; }
+      .chat-widget { bottom: 82px; right: 12px; left: 12px; width: auto; }
+    }
+    @media (max-width: 380px) { .brand img { width: 34px; height: 34px; } .brand-text strong { font-size: 0.95rem; } .container { padding: 0 14px; } }
+  </style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="container header-inner">
+    <a href="index.html" class="brand" aria-label="SureCargo Transport home">
+      <img src="assets/images/logo.png" alt="SureCargo Transport logo" width="40" height="40" />
+      <span class="brand-text"><strong>SureCargo Transport</strong><span>Cargo &amp; Delivery</span></span>
+    </a>
+    <nav class="main-nav" aria-label="Primary navigation">
+      <a href="index.html">Home</a>
+      <a href="services.html" class="active">Services</a>
+      <a href="bantayan-to-bacolod.html">Bacolod Route</a>
+      <a href="bantayan-to-cebu.html">Cebu Route</a>
+      <a href="about.html">About</a>
+      <a href="contact.html">Contact</a>
+    </nav>
+    <div class="header-actions">
+      <a href="contact.html" class="btn btn-primary btn-sm"><span aria-hidden="true">📦</span><span class="btn-quote-text">Request a Cargo Quote</span></a>
+      <button class="hamburger" id="hamburgerBtn" aria-label="Open menu" aria-expanded="false" aria-controls="sidebar"><span></span><span></span><span></span></button>
+    </div>
+  </div>
+</header>
+
+<div class="sidebar-overlay" id="sidebarOverlay" hidden></div>
+<aside class="sidebar" id="sidebar" aria-label="Site navigation" aria-hidden="true">
+  <div class="sidebar-head"><span class="brand-text"><strong>SureCargo Transport</strong><span>Menu</span></span><button class="sidebar-close" id="sidebarClose" aria-label="Close menu">✕</button></div>
+  <nav class="sidebar-nav">
+    <a href="index.html"><span class="ico">🏠</span>Home</a>
+    <a href="about.html"><span class="ico">ℹ️</span>About SureCargo</a>
+    <a href="services.html" class="active"><span class="ico">📋</span>Our Services</a>
+    <div class="sidebar-divider"></div>
+    <a href="bantayan-to-bacolod.html"><span class="ico">🚚</span>Bantayan to Bacolod</a>
+    <a href="bantayan-to-cebu.html"><span class="ico">🚚</span>Bantayan to Cebu</a>
+    <div class="sidebar-divider"></div>
+    <a href="owner.html"><span class="ico">👤</span>Meet the Kind Owner</a>
+    <a href="drivers.html"><span class="ico">🧑‍✈️</span>Meet the Drivers</a>
+    <a href="truck-helpers.html"><span class="ico">💪</span>Meet the Truck Helpers</a>
+    <a href="trucks.html"><span class="ico">🚛</span>View All Trucks</a>
+    <a href="manager.html"><span class="ico">🗂️</span>Meet the Manager</a>
+    <a href="it-developer.html"><span class="ico">💻</span>Meet the IT Developer</a>
+    <div class="sidebar-divider"></div>
+    <a href="contact.html"><span class="ico">📞</span>Contact Information</a>
+    <a href="chatbot.html"><span class="ico">💬</span>Customer Chatbot</a>
+  </nav>
+  <div class="sidebar-cta"><a href="contact.html" class="btn btn-amber" style="width:100%">Request a Cargo Quote</a></div>
+</aside>
+
+<section class="page-hero">
+  <div class="container">
+    <span class="eyebrow">Our Services</span>
+    <h1>Cargo Services Built Around Your Needs</h1>
+    <p>From eggs and boxes to dried seafoods and general cargo, we help move accepted goods along our served routes.</p>
+  </div>
+</section>
+
+<div class="container">
+  <nav class="breadcrumb" aria-label="Breadcrumb"><a href="index.html">Home</a><span>›</span><span>Services</span></nav>
+</div>
+
+<section class="section" style="padding-top:20px;">
+  <div class="container">
+
+    <div class="notice" role="note">
+      <strong>Important:</strong> Cargo acceptance, handling requirements, rates, and schedules must be confirmed with SureCargo Transport before shipping. The information below describes our services in general terms.
+    </div>
+
+    <!-- Egg Delivery -->
+    <article class="service-detail">
+      <div class="service-detail-media">
+        <img src="assets/images/egg-delivery.jpg" alt="Egg delivery cargo service" loading="lazy" onerror="this.style.display='none';this.parentNode.classList.add('img-fallback');this.parentNode.textContent='Egg Delivery';" />
+      </div>
+      <div class="service-detail-body">
+        <span class="service-tag">Route 1</span>
+        <h3>🥚 Egg Delivery — Bantayan to Bacolod</h3>
+        <p>Careful delivery arrangements for eggs shipped from Bantayan Island to Bacolod. Eggs require secure packaging and gentle handling along the route.</p>
+        <div class="detail-route">🚚 Bantayan Island → Bacolod</div>
+        <div class="detail-block">
+          <h4>Suitable Cargo Examples</h4>
+          <ul><li>Fresh eggs in trays or cartons</li><li>Egg products packed for transport</li></ul>
+        </div>
+        <div class="detail-block">
+          <h4>Packaging Advice</h4>
+          <ul><li>Use sturdy egg trays and cartons</li><li>Reinforce outer boxes to prevent crushing</li><li>Confirm handling requirements with us before shipping</li></ul>
+        </div>
+        <a href="contact.html" class="btn btn-primary btn-sm">Inquire About Egg Delivery</a>
+      </div>
+    </article>
+
+    <!-- Box Transportation -->
+    <article class="service-detail reverse">
+      <div class="service-detail-media">
+        <img src="assets/images/boxes.jpg" alt="Box transportation service" loading="lazy" onerror="this.style.display='none';this.parentNode.classList.add('img-fallback');this.parentNode.textContent='Box Transportation';" />
+      </div>
+      <div class="service-detail-body">
+        <span class="service-tag">Route 1</span>
+        <h3>📦 Box Transportation — Bantayan to Bacolod</h3>
+        <p>Transport arrangements for boxed goods and parcels shipped from Bantayan Island to Bacolod. Suitable for a range of properly packaged items.</p>
+        <div class="detail-route">🚚 Bantayan Island → Bacolod</div>
+        <div class="detail-block">
+          <h4>Suitable Cargo Examples</h4>
+          <ul><li>Cardboard boxes of personal goods</li><li>Parcels and balikbayan-style boxes</li><li>Small commercial shipments</li></ul>
+        </div>
+        <div class="detail-block">
+          <h4>Packaging Advice</h4>
+          <ul><li>Seal boxes securely with strong tape</li><li>Label boxes clearly with name and contact</li><li>Confirm contents are accepted before shipping</li></ul>
+        </div>
+        <a href="contact.html" class="btn btn-primary btn-sm">Inquire About Box Delivery</a>
+      </div>
+    </article>
+
+    <!-- Dried Seafoods -->
+    <article class="service-detail">
+      <div class="service-detail-media">
+        <img src="assets/images/dried-seafood.jpg" alt="Dried seafood transportation" loading="lazy" onerror="this.style.display='none';this.parentNode.classList.add('img-fallback');this.parentNode.textContent='Dried Seafoods';" />
+      </div>
+      <div class="service-detail-body">
+        <span class="service-tag">Route 1</span>
+        <h3>🐟 Dried Seafood Transportation</h3>
+        <p>Transport arrangements for dried seafood products from Bantayan Island. Proper packaging helps preserve product quality along the route.</p>
+        <div class="detail-route">🚚 Bantayan Island → Bacolod</div>
+        <div class="detail-block">
+          <h4>Suitable Cargo Examples</h4>
+          <ul><li>Dried fish and squid</li><li>Packaged dried seafood products</li><li>Other accepted dried goods</li></ul>
+        </div>
+        <div class="detail-block">
+          <h4>Packaging Advice</h4>
+          <ul><li>Use sealed bags or containers to control odor</li><li>Pack inside sturdy boxes</li><li>Confirm handling requirements with us before shipping</li></ul>
+        </div>
+        <a href="contact.html" class="btn btn-primary btn-sm">Inquire About Dried Seafoods</a>
+      </div>
+    </article>
+
+    <!-- General Cargo -->
+    <article class="service-detail reverse">
+      <div class="service-detail-media">
+        <img src="assets/images/cargo-delivery.jpg" alt="General cargo transportation" loading="lazy" onerror="this.style.display='none';this.parentNode.classList.add('img-fallback');this.parentNode.textContent='General Cargo';" />
+      </div>
+      <div class="service-detail-body">
+        <span class="service-tag">Route 2</span>
+        <h3>🚚 General Cargo — Bantayan to Cebu</h3>
+        <p>General cargo transportation from Bantayan Island to Cebu. Suitable for a range of goods that are properly prepared and accepted by the company.</p>
+        <div class="detail-route">🚚 Bantayan Island → Cebu</div>
+        <div class="detail-block">
+          <h4>Suitable Cargo Examples</h4>
+          <ul><li>Household goods</li><li>Boxes and parcels</li><li>Accepted general items</li></ul>
+        </div>
+        <div class="detail-block">
+          <h4>Packaging Advice</h4>
+          <ul><li>Pack items securely inside boxes</li><li>Protect fragile items with padding</li><li>Confirm cargo acceptance before shipping</li></ul>
+        </div>
+        <a href="contact.html" class="btn btn-primary btn-sm">Inquire About General Cargo</a>
+      </div>
+    </article>
+
+    <!-- Commercial Cargo -->
+    <article class="service-detail">
+      <div class="service-detail-media">
+        <img src="assets/images/boxes.jpg" alt="Commercial cargo transportation" loading="lazy" onerror="this.style.display='none';this.parentNode.classList.add('img-fallback');this.parentNode.textContent='Commercial Cargo';" />
+      </div>
+      <div class="service-detail-body">
+        <span class="service-tag">Route 2</span>
+        <h3>🏪 Commercial Cargo</h3>
+        <p>Transport arrangements for business shipments along our served routes. Suitable for retail and commercial goods that are properly packaged and accepted.</p>
+        <div class="detail-route">🚚 Bantayan Island → Cebu</div>
+        <div class="detail-block">
+          <h4>Suitable Cargo Examples</h4>
+          <ul><li>Retail stock and inventory</li><li>Boxed commercial goods</li><li>Business supplies</li></ul>
+        </div>
+        <div class="detail-block">
+          <h4>Packaging Advice</h4>
+          <ul><li>Pack commercial goods for safe transport</li><li>Label shipments clearly</li><li>Coordinate details with the company in advance</li></ul>
+        </div>
+        <a href="contact.html" class="btn btn-primary btn-sm">Inquire About Commercial Cargo</a>
+      </div>
+    </article>
+
+    <!-- Other Accepted Goods -->
+    <article class="service-detail reverse">
+      <div class="service-detail-media">
+        <img src="assets/images/hero-truck.jpg" alt="Other accepted goods" loading="lazy" onerror="this.style.display='none';this.parentNode.classList.add('img-fallback');this.parentNode.textContent='Other Accepted Goods';" />
+      </div>
+      <div class="service-detail-body">
+        <span class="service-tag">Flexible</span>
+        <h3>📋 Other Accepted Goods</h3>
+        <p>We may accept additional cargo depending on the type, packaging, and route. Please contact us to confirm whether your goods can be accepted.</p>
+        <div class="detail-route">🚚 Confirm with the company</div>
+        <div class="detail-block">
+          <h4>Suitable Cargo Examples</h4>
+          <ul><li>Goods not listed above (subject to confirmation)</li><li>Special arrangements discussed in advance</li></ul>
+        </div>
+        <div class="detail-block">
+          <h4>Packaging Advice</h4>
+          <ul><li>Describe your cargo to us before shipping</li><li>Follow any handling requirements we provide</li></ul>
+        </div>
+        <a href="contact.html" class="btn btn-primary btn-sm">Ask About Your Cargo</a>
+      </div>
+    </article>
+
+  </div>
+</section>
+
+<!-- Inquiry Panel -->
+<section class="section section-light">
+  <div class="container">
+    <div class="inquiry-panel">
+      <h2>Ready to Send Your Cargo?</h2>
+      <p>Tell us about your cargo and route. We'll review the details and discuss arrangements with you directly.</p>
+      <div class="inquiry-buttons">
+        <a href="contact.html" class="btn btn-primary">Request a Cargo Quote</a>
+        <a href="chatbot.html" class="btn btn-secondary">Chat with SureCargo</a>
+        <a href="bantayan-to-bacolod.html" class="btn btn-secondary">Bacolod Route</a>
+        <a href="bantayan-to-cebu.html" class="btn btn-secondary">Cebu Route</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="section">
+  <div class="container">
+    <div class="section-head">
+      <span class="eyebrow">Common Questions</span>
+      <h2>Service FAQs</h2>
+      <p>General information about our services. For specific arrangements, please contact us.</p>
+    </div>
+    <div class="faq-list">
+      <div class="faq-item">
+        <button class="faq-q" type="button">Do you accept all types of cargo?<span class="chev">▾</span></button>
+        <div class="faq-a"><div class="faq-a-inner">Cargo acceptance depends on the type of goods and route. Please contact SureCargo Transport to confirm whether your cargo can be accepted before shipping.</div></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" type="button">How much does delivery cost?<span class="chev">▾</span></button>
+        <div class="faq-a"><div class="faq-a-inner">Rates depend on cargo type, size, weight, and destination. Please contact the company for a quotation. Rates are not shown on this website because they must be confirmed for each shipment.</div></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" type="button">How should I package my cargo?<span class="chev">▾</span></button>
+        <div class="faq-a"><div class="faq-a-inner">Packaging depends on the goods. Use sturdy boxes, secure sealing, and appropriate padding. For eggs, dried seafoods, or fragile items, please ask us for handling advice before shipping.</div></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" type="button">Can you tell me the delivery schedule in advance?<span class="chev">▾</span></button>
+        <div class="faq-a"><div class="faq-a-inner">Schedules depend on current availability and arrangements. Contact the company to confirm the schedule for your shipment.</div></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" type="button">Where can I drop off or pick up my cargo?<span class="chev">▾</span></button>
+        <div class="faq-a"><div class="faq-a-inner">Collection and drop-off points are arranged with the company. Please contact us to confirm the current arrangements for your route.</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-col">
+        <div class="footer-brand"><img src="assets/images/logo.png" alt="SureCargo Transport logo" width="40" height="40" /><strong>SureCargo Transport</strong></div>
+        <p>Cargo transportation and delivery from Bantayan Island to Bacolod and Cebu. Eggs, boxes, dried seafoods, and other accepted cargo.</p>
+        <p style="margin-top:14px; font-size:0.8rem; color:#64748B;">Sample contact details shown on this website are placeholders and must be replaced before publication.</p>
+      </div>
+      <div class="footer-col"><h4>Our Routes</h4><ul><li><a href="bantayan-to-bacolod.html">Bantayan to Bacolod</a></li><li><a href="bantayan-to-cebu.html">Bantayan to Cebu</a></li><li><a href="services.html">Our Services</a></li><li><a href="trucks.html">View All Trucks</a></li></ul></div>
+      <div class="footer-col"><h4>Our Team</h4><ul><li><a href="owner.html">Owner</a></li><li><a href="drivers.html">Drivers</a></li><li><a href="truck-helpers.html">Truck Helpers</a></li><li><a href="manager.html">Manager</a></li><li><a href="it-developer.html">IT Developer</a></li></ul></div>
+      <div class="footer-col"><h4>Get in Touch</h4><ul><li><a href="contact.html">Contact Information</a></li><li><a href="chatbot.html">Customer Chatbot</a></li><li><a href="about.html">About SureCargo</a></li><li><a href="https://www.facebook.com/" target="_blank" rel="noopener">Facebook (Sample)</a></li></ul></div>
+    </div>
+    <div class="footer-bottom"><span>© <span id="year"></span> SureCargo Transport. All rights reserved.</span><span>Sample website content — replace placeholders before publishing.</span></div>
+  </div>
+</footer>
+
+<button class="chat-fab" id="chatFab" aria-label="Open SureCargo chat assistant" aria-expanded="false" aria-controls="chatWidget">💬</button>
+<div class="chat-widget" id="chatWidget" role="dialog" aria-label="SureCargo chat assistant" aria-hidden="true">
+  <div class="chat-head"><div class="avatar" aria-hidden="true">SC</div><div class="info"><strong>SureCargo Assistant</strong><span>Rule-based • Not AI</span></div><button class="close-btn" id="chatClose" aria-label="Close chat">✕</button></div>
+  <div class="chat-body" id="chatBody" aria-live="polite"></div>
+  <div class="chat-suggestions" id="chatSuggestions"></div>
+  <form class="chat-input-row" id="chatForm"><input type="text" id="chatInput" placeholder="Ask about cargo, routes, or contact info…" aria-label="Type your message" autocomplete="off" /><button type="submit" aria-label="Send message">➤</button></form>
+  <button class="chat-clear" id="chatClear">Clear chat</button>
+</div>
+
+<script src="app.js"></script>
+<script src="chatbot.js"></script>
+</body>
+</html>

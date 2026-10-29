@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Meet the SureCargo Transport truck helpers — Ramram, Mar Capuz, and Sample Helper 03. Learn about cargo preparation, loading, and careful-handling responsibilities." />
+  <meta name="theme-color" content="#102A43" />
+  <title>Meet the Truck Helpers — SureCargo Transport</title>
+  <link rel="icon" href="assets/images/logo.png" type="image/png" />
+  <style>
+    :root {
+      --navy: #102A43; --primary-blue: #1677E8; --light-blue: #EAF4FF; --white: #FFFFFF;
+      --text: #334155; --muted: #64748B; --border: #E2E8F0; --light-gray: #F4F7FB; --amber: #F59E0B;
+      --shadow: 0 10px 30px rgba(16,42,67,0.08); --shadow-lg: 0 20px 50px rgba(16,42,67,0.15);
+      --radius: 16px; --radius-sm: 10px; --radius-lg: 24px; --transition: 0.25s ease;
+      --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+    body { font-family: var(--font); color: var(--text); background: var(--white); line-height: 1.6; font-size: 16px; overflow-x: hidden; }
+    img { max-width: 100%; display: block; }
+    a { color: var(--primary-blue); text-decoration: none; }
+    h1, h2, h3, h4 { color: var(--navy); line-height: 1.2; font-weight: 800; letter-spacing: -0.02em; }
+    h1 { font-size: clamp(1.9rem, 5vw, 3.2rem); }
+    h2 { font-size: clamp(1.5rem, 3.5vw, 2.3rem); }
+    h3 { font-size: clamp(1.1rem, 2vw, 1.35rem); }
+    .container { width: 100%; max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+    .section { padding: clamp(48px, 8vw, 90px) 0; }
+    .section-light { background: var(--light-gray); }
+    .section-head { text-align: center; max-width: 720px; margin: 0 auto clamp(30px, 5vw, 50px); }
+    .section-head p { color: var(--muted); margin-top: 12px; font-size: 1.05rem; }
+    .eyebrow { display: inline-block; font-size: 0.78rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--primary-blue); background: var(--light-blue); padding: 6px 14px; border-radius: 999px; margin-bottom: 14px; }
+
+    .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 13px 24px; border-radius: 999px; font-weight: 700; font-size: 0.95rem; border: 2px solid transparent; cursor: pointer; transition: var(--transition); text-align: center; min-height: 48px; font-family: var(--font); }
+    .btn-primary { background: var(--primary-blue); color: #fff; }
+    .btn-primary:hover { background: #0F5FC4; transform: translateY(-2px); box-shadow: 0 12px 24px rgba(22,119,232,0.3); }
+    .btn-secondary { background: var(--white); color: var(--navy); border-color: var(--border); }
+    .btn-secondary:hover { border-color: var(--primary-blue); color: var(--primary-blue); }
+    .btn-amber { background: var(--amber); color: #fff; }
+    .btn-amber:hover { background: #D97E06; transform: translateY(-2px); }
+    .btn-outline-white { background: transparent; color: #fff; border-color: rgba(255,255,255,0.6); }
+    .btn-outline-white:hover { background: rgba(255,255,255,0.12); border-color: #fff; }
+    .btn-sm { padding: 10px 18px; font-size: 0.88rem; min-height: 42px; }
+
+    /* HEADER */
+    .site-header { position: sticky; top: 0; z-index: 900; background: rgba(255,255,255,0.96); backdrop-filter: blur(10px); border-bottom: 1px solid var(--border); }
+    .header-inner { display: flex; align-items: center; justify-content: space-between; gap: 16px; height: 72px; }
+    .brand { display: flex; align-items: center; gap: 10px; }
+    .brand img { width: 40px; height: 40px; object-fit: contain; border-radius: 8px; }
+    .brand-text { display: flex; flex-direction: column; line-height: 1.15; }
+    .brand-text strong { font-size: 1.05rem; color: var(--navy); font-weight: 800; }
+    .brand-text span { font-size: 0.72rem; color: var(--muted); font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; }
+    .main-nav { display: flex; align-items: center; gap: 4px; }
+    .main-nav a { padding: 9px 14px; border-radius: 8px; color: var(--navy); font-weight: 600; font-size: 0.92rem; transition: var(--transition); }
+    .main-nav a:hover { background: var(--light-blue); color: var(--primary-blue); }
+    .main-nav a.active { color: var(--primary-blue); background: var(--light-blue); }
+    .header-actions { display: flex; align-items: center; gap: 10px; }
+    .hamburger { display: none; width: 46px; height: 46px; border: 1px solid var(--border); background: var(--white); border-radius: 10px; cursor: pointer; flex-direction: column; align-items: center; justify-content: center; gap: 5px; }
+    .hamburger span { display: block; width: 20px; height: 2px; background: var(--navy); border-radius: 2px; }
+
+    /* SIDEBAR */
+    .sidebar-overlay { position: fixed; inset: 0; background: rgba(16,42,67,0.55); opacity: 0; visibility: hidden; transition: var(--transition); z-index: 950; }
+    .sidebar-overlay.open { opacity: 1; visibility: visible; }
+    .sidebar { position: fixed; top: 0; right: 0; width: min(340px, 88vw); height: 100%; background: var(--navy); color: #fff; z-index: 1000; transform: translateX(100%); transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1); display: flex; flex-direction: column; overflow-y: auto; }
+    .sidebar.open { transform: translateX(0); }
+    .sidebar-head { display: flex; align-items: center; justify-content: space-between; padding: 20px 22px; border-bottom: 1px solid rgba(255,255,255,0.12); position: sticky; top: 0; background: var(--navy); z-index: 2; }
+    .sidebar-head .brand-text strong { color: #fff; }
+    .sidebar-head .brand-text span { color: #94A3B8; }
+    .sidebar-close { width: 40px; height: 40px; border: none; background: rgba(255,255,255,0.1); color: #fff; border-radius: 10px; font-size: 1.4rem; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+    .sidebar-close:hover { background: rgba(255,255,255,0.2); }
+    .sidebar-nav { padding: 14px 12px 30px; }
+    .sidebar-nav a { display: flex; align-items: center; gap: 10px; padding: 13px 16px; color: #E2E8F0; font-weight: 600; font-size: 0.95rem; border-radius: 10px; margin-bottom: 2px; transition: var(--transition); }
+    .sidebar-nav a:hover, .sidebar-nav a.active { background: rgba(22,119,232,0.25); color: #fff; }
+    .sidebar-nav a .ico { width: 24px; text-align: center; font-size: 1rem; opacity: 0.9; }
+    .sidebar-divider { height: 1px; background: rgba(255,255,255,0.12); margin: 12px 16px; }
+    .sidebar-cta { padding: 0 16px 20px; }
+
+    /* PAGE HERO */
+    .page-hero {
+      background: linear-gradient(115deg, rgba(16,42,67,0.95) 0%, rgba(16,42,67,0.85) 60%, rgba(22,119,232,0.6) 100%),
+                  url("assets/images/boxes.jpg") center/cover no-repeat;
+      color: #fff; padding: clamp(70px, 12vw, 130px) 0; text-align: center;
+    }
+    .page-hero h1 { color: #fff; margin-bottom: 14px; }
+    .page-hero p { color: #DBEAFE; max-width: 680px; margin: 0 auto; font-size: clamp(1rem, 1.5vw, 1.12rem); }
+    .page-hero .eyebrow { background: rgba(245,158,11,0.2); color: #FCD34D; }
+    .breadcrumb { padding: 16px 0; font-size: 0.85rem; color: var(--muted); }
+    .breadcrumb a { color: var(--muted); }
+    .breadcrumb a:hover { color: var(--primary-blue); }
+    .breadcrumb span { margin: 0 6px; }
+
+    /* NOTICE */
+    .notice { background: #FEF3C7; border: 1px solid #FCD34D; border-left: 5px solid var(--amber); border-radius: var(--radius-sm); padding: 16px 20px; color: #78350F; font-size: 0.9rem; margin-bottom: 40px; }
+    .notice strong { color: #92400E; }
+
+    /* HELPER CARDS GRID */
+    .helpers-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 28px; }
+    .helper-card { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; box-shadow: var(--shadow); display: flex; flex-direction: column; transition: var(--transition); }
+    .helper-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); }
+    .helper-media { height: 280px; background: linear-gradient(135deg, var(--light-blue), #D6E8FF); overflow: hidden; }
+    .helper-media img { width: 100%; height: 100%; object-fit: cover; }
+    .helper-body { padding: 26px; display: flex; flex-direction: column; flex: 1; }
+    .helper-role-tag { display: inline-block; background: var(--light-blue); color: var(--primary-blue); font-weight: 700; font-size: 0.72rem; padding: 5px 12px; border-radius: 999px; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.05em; align-self: flex-start; }
+    .helper-body h2 { font-size: 1.4rem; margin-bottom: 10px; }
+    .helper-body > p { color: var(--muted); margin-bottom: 14px; font-size: 0.92rem; }
+    .helper-body h4 { font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 6px; color: var(--navy); }
+    .helper-body ul { list-style: none; display: grid; gap: 5px; margin-bottom: 16px; }
+    .helper-body ul li { font-size: 0.86rem; padding-left: 18px; position: relative; }
+    .helper-body ul li::before { content: "✓"; color: var(--primary-blue); font-weight: 800; position: absolute; left: 0; }
+    .helper-quote { background: linear-gradient(135deg, #FFFBEB 0%, #FEF3C7 100%); border-left: 4px solid var(--amber); border-radius: var(--radius-sm); padding: 14px 16px; margin-top: auto; }
+    .helper-quote .q-text { font-style: italic; font-weight: 600; color: #78350F; font-size: 0.9rem; margin-bottom: 6px; }
+    .helper-quote .q-meaning { font-size: 0.8rem; color: #92400E; margin-bottom: 6px; }
+    .helper-quote .q-note { font-size: 0.66rem; font-weight: 700; color: #92400E; text-transform: uppercase; letter-spacing: 0.05em; }
+
+    /* PLACEHOLDER BADGE */
+    .placeholder-badge { display: inline-block; background: #FEE2E2; color: #991B1B; font-size: 0.7rem; font-weight: 700; padding: 4px 10px; border-radius: 999px; margin-top: 6px; text-transform: uppercase; letter-spacing: 0.04em; }
+
+    /* TEAM STRIP */
+    .team-strip { background: var(--light-gray); border-radius: var(--radius-lg); padding: 30px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 20px; }
+    .team-strip h3 { margin-bottom: 4px; }
+    .team-strip p { color: var(--muted); font-size: 0.9rem; margin: 0; }
+    .team-strip-actions { display: flex; flex-wrap: wrap; gap: 10px; }
+
+    /* CTA */
+    .cta-banner { background: linear-gradient(120deg, var(--navy) 0%, #1E3A5F 60%, #1F4E8C 100%); border-radius: var(--radius-lg); padding: clamp(36px, 6vw, 64px); text-align: center; color: #fff; }
+    .cta-banner h2 { color: #fff; margin-bottom: 14px; }
+    .cta-banner p { color: #CBD5E1; max-width: 640px; margin: 0 auto 26px; }
+    .cta-banner .hero-buttons { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; }
+
+    /* IMG FALLBACK */
+    .img-fallback { background: linear-gradient(135deg, #EAF4FF, #D6E8FF); display: flex; align-items: center; justify-content: center; color: var(--primary-blue); font-weight: 700; font-size: 0.9rem; text-align: center; padding: 20px; }
+
+    /* FOOTER */
+    .site-footer { background: var(--navy); color: #CBD5E1; padding: 60px 0 24px; }
+    .footer-grid { display: grid; grid-template-columns: 1.4fr 1fr 1fr 1.2fr; gap: 34px; margin-bottom: 40px; }
+    .footer-brand { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+    .footer-brand img { width: 40px; height: 40px; border-radius: 8px; object-fit: contain; background: #fff; padding: 3px; }
+    .footer-brand strong { color: #fff; font-size: 1.05rem; }
+    .footer-col h4 { color: #fff; font-size: 0.95rem; margin-bottom: 16px; }
+    .footer-col p { font-size: 0.88rem; color: #94A3B8; margin-bottom: 10px; }
+    .footer-col ul { list-style: none; display: grid; gap: 9px; }
+    .footer-col ul a { color: #CBD5E1; font-size: 0.88rem; transition: var(--transition); }
+    .footer-col ul a:hover { color: #fff; padding-left: 4px; }
+    .footer-bottom { border-top: 1px solid rgba(255,255,255,0.1); padding-top: 22px; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 10px; font-size: 0.82rem; color: #94A3B8; }
+
+    /* CHATBOT */
+    .chat-fab { position: fixed; bottom: 22px; right: 22px; width: 60px; height: 60px; border-radius: 50%; background: var(--primary-blue); color: #fff; border: none; cursor: pointer; box-shadow: 0 12px 30px rgba(22,119,232,0.45); display: flex; align-items: center; justify-content: center; font-size: 1.5rem; z-index: 880; transition: var(--transition); }
+    .chat-fab:hover { transform: scale(1.08); background: #0F5FC4; }
+    .chat-widget { position: fixed; bottom: 92px; right: 22px; width: min(370px, calc(100vw - 32px)); max-height: min(560px, calc(100vh - 130px)); background: #fff; border-radius: 18px; box-shadow: 0 24px 60px rgba(16,42,67,0.28); display: flex; flex-direction: column; overflow: hidden; z-index: 890; transform: translateY(16px) scale(0.98); opacity: 0; visibility: hidden; transition: var(--transition); }
+    .chat-widget.open { transform: translateY(0) scale(1); opacity: 1; visibility: visible; }
+    .chat-head { background: linear-gradient(120deg, var(--navy), #1E3A5F); color: #fff; padding: 14px 16px; display: flex; align-items: center; gap: 10px; }
+    .chat-head .avatar { width: 36px; height: 36px; border-radius: 50%; background: var(--primary-blue); display: flex; align-items: center; justify-content: center; font-weight: 800; flex-shrink: 0; }
+    .chat-head .info { flex: 1; line-height: 1.2; }
+    .chat-head .info strong { display: block; font-size: 0.92rem; }
+    .chat-head .info span { font-size: 0.72rem; color: #93C5FD; }
+    .chat-head .close-btn { background: rgba(255,255,255,0.12); border: none; color: #fff; width: 32px; height: 32px; border-radius: 8px; cursor: pointer; font-size: 1.1rem; }
+    .chat-body { flex: 1; overflow-y: auto; padding: 16px; background: var(--light-gray); display: flex; flex-direction: column; gap: 10px; }
+    .msg { max-width: 84%; padding: 10px 14px; border-radius: 14px; font-size: 0.88rem; line-height: 1.5; word-wrap: break-word; }
+    .msg.bot { background: #fff; color: var(--text); border-bottom-left-radius: 4px; align-self: flex-start; box-shadow: 0 2px 8px rgba(16,42,67,0.06); }
+    .msg.user { background: var(--primary-blue); color: #fff; border-bottom-right-radius: 4px; align-self: flex-end; }
+    .msg.typing { display: inline-flex; gap: 4px; align-items: center; }
+    .msg.typing span { width: 6px; height: 6px; border-radius: 50%; background: var(--muted); animation: blink 1.2s infinite; }
+    .msg.typing span:nth-child(2) { animation-delay: 0.2s; }
+    .msg.typing span:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes blink { 0%,80%,100% { opacity: 0.3; } 40% { opacity: 1; } }
+    .chat-suggestions { display: flex; flex-wrap: wrap; gap: 6px; padding: 0 16px 10px; background: var(--light-gray); }
+    .chat-suggestions button { font-size: 0.76rem; padding: 7px 11px; border-radius: 999px; border: 1px solid var(--border); background: #fff; color: var(--navy); cursor: pointer; font-weight: 600; transition: var(--transition); font-family: var(--font); }
+    .chat-suggestions button:hover { border-color: var(--primary-blue); color: var(--primary-blue); }
+    .chat-input-row { display: flex; gap: 8px; padding: 12px; background: #fff; border-top: 1px solid var(--border); }
+    .chat-input-row input { flex: 1; border: 1px solid var(--border); border-radius: 10px; padding: 11px 14px; font-size: 0.9rem; font-family: var(--font); outline: none; color: var(--text); }
+    .chat-input-row input:focus { border-color: var(--primary-blue); box-shadow: 0 0 0 3px rgba(22,119,232,0.15); }
+    .chat-input-row button { width: 46px; border: none; border-radius: 10px; background: var(--primary-blue); color: #fff; cursor: pointer; font-size: 1.1rem; }
+    .chat-clear { width: 100%; border: none; background: transparent; color: var(--muted); font-size: 0.76rem; padding: 8px; cursor: pointer; border-top: 1px solid var(--border); font-family: var(--font); }
+
+    :focus-visible { outline: 3px solid var(--amber); outline-offset: 2px; }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; scroll-behavior: auto !important; } }
+
+    @media (max-width: 1024px) {
+      .main-nav { display: none; } .hamburger { display: flex; } .header-actions .btn-quote-text { display: none; }
+      .footer-grid { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 640px) {
+      .header-inner { height: 64px; } .brand-text span { display: none; }
+      .footer-grid { grid-template-columns: 1fr; gap: 26px; }
+      .chat-fab { bottom: 16px; right: 16px; width: 54px; height: 54px; }
+      .chat-widget { bottom: 82px; right: 12px; left: 12px; width: auto; }
+      .team-strip { flex-direction: column; text-align: center; }
+      .helpers-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 380px) { .brand img { width: 34px; height: 34px; } .brand-text strong { font-size: 0.95rem; } .container { padding: 0 14px; } }
+  </style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="container header-inner">
+    <a href="index.html" class="brand" aria-label="SureCargo Transport home">
+      <img src="assets/images/logo.png" alt="SureCargo Transport logo" width="40" height="40" />
+      <span class="brand-text"><strong>SureCargo Transport</strong><span>Cargo &amp; Delivery</span></span>
+    </a>
+    <nav class="main-nav" aria-label="Primary navigation">
+      <a href="index.html">Home</a>
+      <a href="services.html">Services</a>
+      <a href="bantayan-to-bacolod.html">Bacolod Route</a>
+      <a href="bantayan-to-cebu.html">Cebu Route</a>
+      <a href="about.html">About</a>
+      <a href="contact.html">Contact</a>
+    </nav>
+    <div class="header-actions">
+      <a href="contact.html" class="btn btn-primary btn-sm"><span aria-hidden="true">📦</span><span class="btn-quote-text">Request a Cargo Quote</span></a>
+      <button class="hamburger" id="hamburgerBtn" aria-label="Open menu" aria-expanded="false" aria-controls="sidebar"><span></span><span></span><span></span></button>
+    </div>
+  </div>
+</header>
+
+<div class="sidebar-overlay" id="sidebarOverlay" hidden></div>
+<aside class="sidebar" id="sidebar" aria-label="Site navigation" aria-hidden="true">
+  <div class="sidebar-head"><span class="brand-text"><strong>SureCargo Transport</strong><span>Menu</span></span><button class="sidebar-close" id="sidebarClose" aria-label="Close menu">✕</button></div>
+  <nav class="sidebar-nav">
+    <a href="index.html"><span class="ico">🏠</span>Home</a>
+    <a href="about.html"><span class="ico">ℹ️</span>About SureCargo</a>
+    <a href="services.html"><span class="ico">📋</span>Our Services</a>
+    <div class="sidebar-divider"></div>
+    <a href="bantayan-to-bacolod.html"><span class="ico">🚚</span>Bantayan to Bacolod</a>
+    <a href="bantayan-to-cebu.html"><span class="ico">🚚</span>Bantayan to Cebu</a>
+    <div class="sidebar-divider"></div>
+    <a href="owner.html"><span class="ico">👤</span>Meet the Kind Owner</a>
+    <a href="drivers.html"><span class="ico">🧑‍✈️</span>Meet the Drivers</a>
+    <a href="truck-helpers.html" class="active"><span class="ico">💪</span>Meet the Truck Helpers</a>
+    <a href="trucks.html"><span class="ico">🚛</span>View All Trucks</a>
+    <a href="manager.html"><span class="ico">🗂️</span>Meet the Manager</a>
+    <a href="it-developer.html"><span class="ico">💻</span>Meet the IT Developer</a>
+    <div class="sidebar-divider"></div>
+    <a href="contact.html"><span class="ico">📞</span>Contact Information</a>
+    <a href="chatbot.html"><span class="ico">💬</span>Customer Chatbot</a>
+  </nav>
+  <div class="sidebar-cta"><a href="contact.html" class="btn btn-amber" style="width:100%">Request a Cargo Quote</a></div>
+</aside>
+
+<section class="page-hero">
+  <div class="container">
+    <span class="eyebrow">Our Truck Helpers</span>
+    <h1>Meet the Truck Helpers</h1>
+    <p>Our truck helpers assist with cargo preparation, loading, and unloading to help ensure goods are handled carefully along the route.</p>
+  </div>
+</section>
+
+<div class="container">
+  <nav class="breadcrumb" aria-label="Breadcrumb"><a href="index.html">Home</a><span>›</span><span>Truck Helpers</span></nav>
+</div>
+
+<section class="section" style="padding-top:20px;">
+  <div class="container">
+
+    <div class="notice" role="note">
+      <strong>Note:</strong> The introductions and quotes below are sample website copy. The third helper's name is a placeholder and should be replaced with the actual team member's name before publishing.
+    </div>
+
+    <div class="helpers-grid">
+
+      <!-- Helper 1: Ramram -->
+      <article class="helper-card">
+        <div class="helper-media">
+          <img src="assets/images/helpers/ramram.jpg" alt="Portrait of truck helper Ramram" loading="lazy" onerror="this.style.display='none';this.parentNode.classList.add('img-fallback');this.parentNode.textContent='Ramram';" />
+        </div>
+        <div class="helper-body">
+          <span class="helper-role-tag">Truck Helper</span>
+          <h2>Ramram</h2>
+          <p>Ramram serves as a truck helper for SureCargo Transport, assisting with the careful loading and unloading of cargo along our served routes.</p>
+          <h4>General Responsibilities</h4>
+          <ul>
+            <li>Assist with loading and unloading cargo</li>
+            <li>Help prepare cargo for transport</li>
+            <li>Work with the driver to secure goods during trips</li>
+            <li>Handle items with care appropriate to the goods</li>
+          </ul>
+          <div class="helper-quote">
+            <p class="q-text">"Ang kugihan nga pagtrabaho ug pagtinabangay mao ang yawe sa maayong serbisyo."</p>
+            <p class="q-meaning"><strong>English meaning:</strong> "Hard work and teamwork are the key to good service."</p>
+            <span class="q-note">Sample quote</span>
+          </div>
+        </div>
+      </article>
+
+      <!-- Helper 2: Mar Capuz -->
+      <article class="helper-card">
+        <div class="helper-media">
+          <img src="assets/images/helpers/mar-capuz.jpg" alt="Portrait of truck helper Mar Capuz" loading="lazy" onerror="this.style.display='none';this.parentNode.classList.add('img-fallback');this.parentNode.textContent='Mar Capuz';" />
+        </div>
+        <div class="helper-body">
+          <span class="helper-role-tag">Truck Helper</span>
+          <h2>Mar Capuz</h2>
+          <p>Mar Capuz is a truck helper for SureCargo Transport, supporting cargo preparation and careful handling along our served routes.</p>
+          <h4>General Responsibilities</h4>
+          <ul>
+            <li>Assist with loading and unloading cargo</li>
+            <li>Check cargo is properly secured for travel</li>
+            <li>Support drivers during trips as needed</li>
+            <li>Handle items with care appropriate to the goods</li>
+          </ul>
+          <div class="helper-quote">
+            <p class="q-text">"Atimanon nato ang kargamento sama sa butang nga importante sa atong kustomer."</p>
+            <p class="q-meaning"><strong>English meaning:</strong> "We care for the cargo as if it were something important to our customer."</p>
+            <span class="q-note">Sample quote</span>
+          </div>
+        </div>
+      </article>
+
+      <!-- Helper 3: Sample Helper 03 -->
+      <article class="helper-card">
+        <div class="helper-media">
+          <img src="assets/images/helpers/truck-helper-03.jpg" alt="Portrait of truck helper 3" loading="lazy" onerror="this.style.display='none';this.parentNode.classList.add('img-fallback');this.parentNode.textContent='Truck Helper 03';" />
+        </div>
+        <div class="helper-body">
+          <span class="helper-role-tag">Truck Helper</span>
+          <h2>Sample Helper 03 <span class="placeholder-badge">Placeholder Name</span></h2>
+          <p>This is a temporary placeholder profile for a third truck helper. Replace the name and introduction with the actual team member's details before publishing.</p>
+          <h4>General Responsibilities</h4>
+          <ul>
+            <li>Assist with loading and unloading cargo</li>
+            <li>Help prepare cargo for transport</li>
+            <li>Support the rest of the cargo team</li>
+            <li>Handle items with care appropriate to the goods</li>
+          </ul>
+          <div class="helper-quote">
+            <p class="q-text">"Sa panaghiusa sa team, mas hapsay ang matag biyahe."</p>
+            <p class="q-meaning"><strong>English meaning:</strong> "With teamwork, every trip goes more smoothly."</p>
+            <span class="q-note">Sample quote</span>
+          </div>
+        </div>
+      </article>
+
+    </div>
+
+    <!-- Team strip -->
+    <div class="team-strip" style="margin-top:40px;">
+      <div>
+        <h3>Meet the rest of the SureCargo team</h3>
+        <p>Our drivers, manager, owner, and IT developer also support our cargo service.</p>
+      </div>
+      <div class="team-strip-actions">
+        <a href="drivers.html" class="btn btn-secondary btn-sm">Drivers</a>
+        <a href="manager.html" class="btn btn-secondary btn-sm">Manager</a>
+        <a href="owner.html" class="btn btn-secondary btn-sm">Owner</a>
+        <a href="it-developer.html" class="btn btn-secondary btn-sm">IT Developer</a>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <div class="cta-banner">
+      <h2>Have a Cargo Inquiry?</h2>
+      <p>Our team is ready to help answer questions about your shipment. Contact SureCargo Transport to discuss your needs.</p>
+      <div class="hero-buttons">
+        <a href="contact.html" class="btn btn-amber">Contact Us</a>
+        <a href="chatbot.html" class="btn btn-outline-white">Chat with SureCargo</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-col">
+        <div class="footer-brand"><img src="assets/images/logo.png" alt="SureCargo Transport logo" width="40" height="40" /><strong>SureCargo Transport</strong></div>
+        <p>Cargo transportation and delivery from Bantayan Island to Bacolod and Cebu. Eggs, boxes, dried seafoods, and other accepted cargo.</p>
+        <p style="margin-top:14px; font-size:0.8rem; color:#64748B;">Sample contact details shown on this website are placeholders and must be replaced before publication.</p>
+      </div>
+      <div class="footer-col"><h4>Our Routes</h4><ul><li><a href="bantayan-to-bacolod.html">Bantayan to Bacolod</a></li><li><a href="bantayan-to-cebu.html">Bantayan to Cebu</a></li><li><a href="services.html">Our Services</a></li><li><a href="trucks.html">View All Trucks</a></li></ul></div>
+      <div class="footer-col"><h4>Our Team</h4><ul><li><a href="owner.html">Owner</a></li><li><a href="drivers.html">Drivers</a></li><li><a href="truck-helpers.html">Truck Helpers</a></li><li><a href="manager.html">Manager</a></li><li><a href="it-developer.html">IT Developer</a></li></ul></div>
+      <div class="footer-col"><h4>Get in Touch</h4><ul><li><a href="contact.html">Contact Information</a></li><li><a href="chatbot.html">Customer Chatbot</a></li><li><a href="about.html">About SureCargo</a></li><li><a href="https://www.facebook.com/" target="_blank" rel="noopener">Facebook (Sample)</a></li></ul></div>
+    </div>
+    <div class="footer-bottom"><span>© <span id="year"></span> SureCargo Transport. All rights reserved.</span><span>Sample website content — replace placeholders before publishing.</span></div>
+  </div>
+</footer>
+
+<button class="chat-fab" id="chatFab" aria-label="Open SureCargo chat assistant" aria-expanded="false" aria-controls="chatWidget">💬</button>
+<div class="chat-widget" id="chatWidget" role="dialog" aria-label="SureCargo chat assistant" aria-hidden="true">
+  <div class="chat-head"><div class="avatar" aria-hidden="true">SC</div><div class="info"><strong>SureCargo Assistant</strong><span>Rule-based • Not AI</span></div><button class="close-btn" id="chatClose" aria-label="Close chat">✕</button></div>
+  <div class="chat-body" id="chatBody" aria-live="polite"></div>
+  <div class="chat-suggestions" id="chatSuggestions"></div>
+  <form class="chat-input-row" id="chatForm"><input type="text" id="chatInput" placeholder="Ask about cargo, routes, or contact info…" aria-label="Type your message" autocomplete="off" /><button type="submit" aria-label="Send message">➤</button></form>
+  <button class="chat-clear" id="chatClear">Clear chat</button>
+</div>
+
+<script src="app.js"></script>
+<script src="chatbot.js"></script>
+</body>
+</html>
